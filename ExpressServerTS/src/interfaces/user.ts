@@ -8,8 +8,6 @@ export interface UserInterface {
   profileImageUrl?: string;
   password: string;
   bio: string;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export interface UserCreationAttributes

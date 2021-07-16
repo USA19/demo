@@ -16,9 +16,9 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const email = req.body.email;
     const password = req.body.password;
-    const user: UserInterface = (await UserModel.findOne({
+    const user = await UserModel.findOne({
       where: { email: email },
-    })) as unknown as UserInterface;
+    });
 
     console.log("USER >>>>", user);
     if (!user) {
@@ -58,21 +58,15 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
     }
     const hashedPassword = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 
-    // const newUser = new UserModel({
-    // firstName: userBody.firstName.toString(),
-    // lastName: userBody.lastName.toString(),
-    // date_of_birth: new Date(userBody.date_of_birth),
-    // email: email.toString(),
-    // password: hashedPassword.toString(),
-    // });
-    // const newUse = await UserModel.create({
-    //   firstName: userBody.firstName,
-    //   lastName: userBody.lastName.toString(),
-    //   date_of_birth: new Date(userBody.date_of_birth),
-    //   email: email.toString(),
-    //   password: hashedPassword.toString(),
-    // });
-    // await newUser.save();
+    const newUser = new UserModel({
+      firstName: userBody.firstName,
+      lastName: userBody.lastName,
+      date_of_birth: new Date(userBody.date_of_birth),
+      email: email,
+      password: hashedPassword,
+    });
+
+    await newUser.save();
 
     res.status(200).json({ message: "user created successfully" });
   } catch (e) {

@@ -1,90 +1,119 @@
-import { DataTypes, Model, ModelDefined } from "sequelize";
+import { DataTypes, Model, ModelAttributes, ModelDefined } from "sequelize";
 import sequelize from "../config/database";
 import { UserInterface, UserCreationAttributes } from "../interfaces/user";
 
-const User: ModelDefined<UserInterface, UserCreationAttributes> =
-  sequelize.define(
-    "User",
-    {
-      id: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        primaryKey: true,
-        autoIncrement: true,
-      },
-      firstName: {
-        type: DataTypes.STRING,
-      },
+// const User: ModelDefined<UserInterface, UserCreationAttributes> =
+//   sequelize.define(
+//     "User",
+//     {
+//       id: {
+//         type: DataTypes.INTEGER,
+//         allowNull: false,
+//         primaryKey: true,
+//         autoIncrement: true,
+//       },
+// firstName: {
+//   type: DataTypes.STRING,
+// },
 
-      lastName: {
-        type: DataTypes.STRING,
-      },
+// lastName: {
+//   type: DataTypes.STRING,
+// },
 
-      email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: "email",
-      },
-      date_of_birth: {
-        type: DataTypes.DATE,
-        allowNull: true,
-      },
+// email: {
+//   type: DataTypes.STRING,
+//   allowNull: false,
+//   unique: "email",
+// },
+// date_of_birth: {
+//   type: DataTypes.DATE,
+//   allowNull: true,
+// },
 
-      bio: {
-        type: DataTypes.STRING,
-      },
-      profileImageUrl: {
-        type: DataTypes.STRING,
-      },
+// bio: {
+//   type: DataTypes.STRING,
+// },
+// profileImageUrl: {
+//   type: DataTypes.STRING,
+// },
 
-      password: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-    },
-    {
-      tableName: "users",
-      //sequelize: sequelize, // passing the `sequelize` instance is required
-    }
-  );
-
-export default User;
-
-// class User
-//   extends Model<UserInterface, UserCreationAttributes>
-//   implements UserInterface
-// {
-//   public id!: number; // Note that the `null assertion` `!` is required in strict mode.
-//   public name!: string;
-//   public firstName!: string;
-//   public lastName!: string;
-
-//   public email!: string;
-
-//   // timestamps!
-//   date_of_birth!: Date;
-//   bio!: string;
-//   profileImageUrl!: string;
-//   password!: string;
-
-//   public readonly createdAt!: Date;
-//   public readonly updatedAt!: Date;
-// }
-
-// User.init(
-//   {
-//     id: {
-//       type: DataTypes.INTEGER,
-//       allowNull: false,
-//       primaryKey: true,
-//       autoIncrement: true,
+// password: {
+//   type: DataTypes.STRING,
+//   allowNull: false,
+// },
 //     },
-//   },
-//   {
-//     tableName: "users",
-//     sequelize, // passing the `sequelize` instance is required
-//   }
-// );
+//     {
+//       tableName: "users",
+//       //sequelize: sequelize, // passing the `sequelize` instance is required
+//     }
+//   );
+
+// export default User;
+
+class User
+  extends Model<UserInterface, UserCreationAttributes>
+  implements UserInterface
+{
+  public id!: number; // Note that the `null assertion` `!` is required in strict mode.
+  public name!: string;
+  public firstName!: string;
+  public lastName!: string;
+
+  public email!: string;
+
+  // timestamps!
+  date_of_birth!: Date;
+  bio!: string;
+  profileImageUrl!: string;
+  password!: string;
+
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+}
+
+User.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    firstName: {
+      type: DataTypes.STRING,
+    },
+
+    lastName: {
+      type: DataTypes.STRING,
+    },
+
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: "email",
+    },
+    date_of_birth: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+
+    bio: {
+      type: DataTypes.STRING,
+    },
+    profileImageUrl: {
+      type: DataTypes.STRING,
+    },
+
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+  },
+  {
+    tableName: "users",
+    sequelize, // passing the `sequelize` instance is required
+  }
+);
 
 // import * as Sequelize from "sequelize";
 // import sequelize from "../config/database";
@@ -116,3 +145,5 @@ export default User;
 //   email: Sequelize.STRING,
 //   password: Sequelize.STRING,
 // });
+
+export default User;
