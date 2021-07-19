@@ -1,7 +1,7 @@
-import { DataTypes, Model, ModelAttributes, ModelDefined } from "sequelize";
+import { Association, DataTypes, Model, HasOne } from "sequelize";
 import sequelize from "../config/database";
 import { UserInterface, UserCreationAttributes } from "../interfaces/user";
-
+import Role from "./Role.model";
 // const User: ModelDefined<UserInterface, UserCreationAttributes> =
 //   sequelize.define(
 //     "User",
@@ -66,9 +66,13 @@ class User
   bio!: string;
   profileImageUrl!: string;
   password!: string;
-
+  public readonly role?: Role;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+
+  public static associations: {
+    role: Association<User, Role>;
+  };
 }
 
 User.init(

@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { AuthContext } from "../../Context/AuthContext/AuthContext";
+import { AlertContext } from "../../Context/AlertContext/AlertContext";
 import { useStyles } from "../styles";
 import { initialValues, validationSchema } from "./formInitials";
 import Avatar from "@material-ui/core/Avatar";
@@ -10,17 +12,20 @@ import IconButton from "@material-ui/core/IconButton";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
 import Grid from "@material-ui/core/Grid";
-// import Box from "@material-ui/core/Box";
 import { Link } from "react-router-dom";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { useFormik } from "formik";
-
+import { useHistory } from "react-router-dom";
 import Container from "@material-ui/core/Container";
+import { loginApi } from "../../Context/AuthContext/Api";
 
 export default function SignIn() {
+  const history = useHistory();
   const classes = useStyles();
   const [passwordType, setPasswordType] = useState("password");
+  const { setUser, setIsSignedIn, Loader } = useContext(AuthContext);
+  const { showServerError, showLoginError } = useContext(AlertContext);
 
   const handleClickShowPassword = () => {
     if (passwordType === "password") {
@@ -33,8 +38,24 @@ export default function SignIn() {
     useFormik({
       initialValues: initialValues,
       validationSchema,
-      onSubmit: (values, { resetForm }) => {
-        // dispatch(signup(values, resetForm));
+      onSubmit: async (values, { resetForm }) => {
+        try {
+          // Loader();
+          const user = await loginApi(values);
+          setIsSignedIn(true);
+          setUser(user);
+
+          history.push("/");
+          // Loader();
+        } catch (e) {
+          // Loader();
+          if (e.response && e.response.status === 400) {
+            Loader();
+            showLoginError();
+          } else {
+            showServerError();
+          }
+        }
       },
     });
   return (

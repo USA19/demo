@@ -11,3 +11,16 @@ export interface signin {
   email: string;
   password: string;
 }
+
+
+export interface signinResponse {
+  user: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    date_of_birth: Date;
+    roleId: number;
+  };
+  token: string;
+}

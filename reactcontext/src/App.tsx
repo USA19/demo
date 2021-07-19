@@ -3,15 +3,18 @@ import history from "./history";
 import { Route, Router } from "react-router-dom";
 import { authRoutes, AppRoutes } from "./Routes/appRoutes";
 import FullPageLoader from "./Components/FullPageLoader";
-import { AuthContext, AuthProvider } from "./Context/AuthContext/AuthContext";
+import { AuthContext } from "./Context/AuthContext/AuthContext";
+import Alert from "./Components/Alert";
 function App() {
-  // return authRoutes.map(route=><Route >);
-  const context = useContext(AuthContext);
+  const { isSignedIn, loading } = useContext(AuthContext);
+
   return (
-    <AuthProvider>
-      {context.loading ? <FullPageLoader /> : ""}
+    <>
+      <Alert />
+
+      {loading ? <FullPageLoader /> : ""}
       <Router history={history}>
-        {!context.isSignedIn
+        {!isSignedIn
           ? authRoutes.map((route) => (
               <Route
                 path={route.path}
@@ -27,7 +30,7 @@ function App() {
               />
             ))}
       </Router>
-    </AuthProvider>
+    </>
   );
 }
 

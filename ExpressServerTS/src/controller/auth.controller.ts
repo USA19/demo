@@ -12,6 +12,7 @@ interface loginBody extends Request {
 interface signupBody extends Request {
   body: UserInterface;
 }
+// const User = new UserModel();
 const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const email = req.body.email;
@@ -20,7 +21,6 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
       where: { email: email },
     });
 
-    console.log("USER >>>>", user);
     if (!user) {
       return res
         .status(400)
@@ -45,7 +45,6 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
 const signup = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    console.log("ey");
     const userBody = req.body as UserInterface;
     const email = userBody.email;
     const password = userBody.password;
@@ -57,7 +56,13 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
         .json({ message: "the user with this email already exist try other" });
     }
     const hashedPassword = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
-
+    // await UserModel.create({
+    //   firstName: userBody.firstName,
+    //   lastName: userBody.lastName,
+    //   date_of_birth: new Date(userBody.date_of_birth),
+    //   email: email,
+    //   password: hashedPassword,
+    // });
     const newUser = new UserModel({
       firstName: userBody.firstName,
       lastName: userBody.lastName,
@@ -71,7 +76,7 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
     res.status(200).json({ message: "user created successfully" });
   } catch (e) {
     console.trace(e);
-    res.status(200).json({ messsage: "something went wrong in login" });
+    res.status(200).json({ messsage: "something went wrong in signup" });
   }
 };
 

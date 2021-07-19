@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { AuthContext } from "../../Context/AuthContext/AuthContext";
+import { AlertContext } from "../../Context/AlertContext/AlertContext";
+import { signupApi } from "../../Context/AuthContext/Api";
 import { useStyles } from "../styles";
 import { initialValues, validationSchema } from "./formInitials";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -17,6 +20,8 @@ import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import { useFormik } from "formik";
 export default function SignUp() {
+  const { Loader } = useContext(AuthContext);
+  const { showServerError, showSignupError } = useContext(AlertContext);
   const classes = useStyles();
   const [passwordType, setPasswordType] = useState("password");
   const [rePasswordType, setRePasswordType] = useState("password");
@@ -42,7 +47,26 @@ export default function SignUp() {
       initialValues: initialValues,
       validationSchema,
       onSubmit: (values, { resetForm }) => {
-        // dispatch(signup(values, resetForm));
+        try {
+          Loader();
+
+          signupApi({
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email: values.email,
+            password: values.password,
+            date_of_birth: new Date(values.date_of_birth),
+            roleId: 1,
+          });
+          Loader();
+        } catch (e) {
+          Loader();
+          if (e.response && e.response.status === 400) {
+            showSignupError();
+          } else {
+            showServerError();
+          }
+        }
       },
     });
 
