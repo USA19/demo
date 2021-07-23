@@ -5,8 +5,11 @@ import jwt from "jsonwebtoken";
 import config from "../config/config";
 
 interface authBody extends Request {
-  isAuthenticated: Boolean;
-  userId: number | undefined;
+  user?: {
+    isAuthenticated: boolean;
+    userId: number | undefined;
+    isAdmin: boolean;
+  };
 }
 export const isAuthenticated = (
   req: authBody,
@@ -32,8 +35,10 @@ export const isAuthenticated = (
           .status(500)
           .json({ message: "Failed to authenticate token." });
       }
-      req.isAuthenticated = true;
-      req.userId = decoded ? decoded.userId : "";
+      if (decoded && req.user) {
+        req.user.isAuthenticated = true;
+        req.user.userId = decoded.userId;
+      }
     });
     next();
   } catch (e) {
@@ -42,18 +47,22 @@ export const isAuthenticated = (
   }
 };
 
-// export const isAdmin = async (req: authBody, res: Response, next: NextFunction) => {
-//   try {
-//     const user = await User.findByPk(req.userId);
+export const isAdmin = async (
+  req: authBody,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = await User.findByPk(req.body.userId);
 
-//     if (user.roleId !== 2) {
-//       return res.status(400).json({ message: "not authenticated" });
-//     }
-//     req.isAdmin = true;
-//     next();
-//   } catch (e) {
-//     console.trace(e);
-//     console.log("problem is here in util is Admin");
-//     return res.status(500).json({ message: "Server side Error isAdmin" });
-//   }
-// };
+    if (user && user.RoleId !== 2) {
+      return res.status(400).json({ message: "not authenticated" });
+    }
+    req.user && (req.user.isAdmin = true);
+    next();
+  } catch (e) {
+    console.trace(e);
+    console.log("problem is here in util is Admin");
+    return res.status(500).json({ message: "Server side Error isAdmin" });
+  }
+};

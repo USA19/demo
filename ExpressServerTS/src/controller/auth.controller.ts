@@ -56,19 +56,14 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
         .json({ message: "the user with this email already exist try other" });
     }
     const hashedPassword = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
-    // await UserModel.create({
-    //   firstName: userBody.firstName,
-    //   lastName: userBody.lastName,
-    //   date_of_birth: new Date(userBody.date_of_birth),
-    //   email: email,
-    //   password: hashedPassword,
-    // });
+
     const newUser = new UserModel({
       firstName: userBody.firstName,
       lastName: userBody.lastName,
       date_of_birth: new Date(userBody.date_of_birth),
       email: email,
       password: hashedPassword,
+      RoleId: 1,
     });
 
     await newUser.save();

@@ -8,6 +8,7 @@ export interface UserInterface {
   profileImageUrl?: string;
   password: string;
   bio: string;
+  RoleId?: number;
 }
 
 export interface UserCreationAttributes

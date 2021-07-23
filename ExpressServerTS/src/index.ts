@@ -3,6 +3,7 @@ import cors from "cors";
 import database from "./config/database";
 import authRoutes from "./routes/auth.routes";
 import roleRoutes from "./routes/role.routes";
+import postRoutes from "./routes/post.route";
 // import path from "path";
 
 process
@@ -18,16 +19,25 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
 app.use("/images", express.static("./images"));
 
 // routes
 
 app.use(authRoutes);
 app.use(roleRoutes);
-app.get("/", (req, res) => {
-  res.send("im on");
-});
-// global.appRoot = path.resolve(__dirname);
+app.use(postRoutes);
+
+// global.appRoot:string = path.resolve(__dirname);declare module NodeJS  {
+// declare module NodeJS {
+//   interface Global {
+//     appRoot: string;
+//   }
+// }
+
+// declare global {
+//   const appRoot = path.resolve(__dirname);
+// }
 database
   .sync({ alter: true }) // when force: true, there would be all data in all tables deleted
   .then(() => {
