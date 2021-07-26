@@ -60,6 +60,48 @@ export const CreatePost = async (
   }
 };
 
+export const editPost = async (
+  req: postBody,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const post = await Post.findByPk(req.params.id, {
+      include: [{ model: PostMedia }],
+    });
+    if (!post) {
+      return res.status(400).json({ message: "Post does not found" });
+    }
+
+    if (req.user && req.user.userId !== post.UserId) {
+      return res
+        .status(400)
+        .json({ message: "Only orignal creator can delete the post" });
+    }
+
+    post.description = req.body.description;
+    if (req.files) {
+      let postMedia = [];
+
+      for (let file of req.files as Express.Multer.File[]) {
+        postMedia.push({
+          PostId: post.id,
+          mediaUrl: file.path,
+        });
+      }
+      // console.log("🚀 ~ file: post.controller.js ~ line 40 ~");
+      await PostMedia.bulkCreate(postMedia);
+    }
+
+    await post.save();
+    await post.reload();
+    res.status(200).json(post);
+  } catch (e) {
+    res.status(500).json({ message: "something went wrong in editing Posts" });
+    console.trace(e);
+  }
+};
+
 export const deletePost = async (
   req: postBody,
   res: Response,
@@ -93,6 +135,73 @@ export const deletePost = async (
   }
 };
 
+export const fetchPosts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const page: string = String(req.query.page) || "1";
+    const limit: string = String(req.query.limit) || "10";
+    // console.log("===============>>>>>>>>>>", page, limit);
+    // const { page, limit = 0 } = req.query;
+    const comments = await Comment.findAll({
+      include: [
+        {
+          model: Comment,
+          // include: [
+          //   {
+          //     model: Comment,
+          //     include: [
+          //       {
+          //         model: Comment,
+          //       },
+          //     ],
+          //   },
+          // ],
+        },
+      ],
+    });
+    // const post = await Post.findAll({
+    //   include: [
+    //     {
+    //       model: User,
+    //       as: "Author",
+    //       attributes: [
+    //         "id",
+    //         "firstName",
+    //         "lastName",
+    //         "email",
+    //         "profileImageUrl",
+    //         "RoleId",
+    //       ],
+    //     },
+    //     { model: PostMedia },
+    //     {
+    //       model: Comment,
+    //       as: "Commenter",
+    //       nested: true,
+    //       include: [
+    //         {
+    //           all: true,
+    //           nested: true,
+    //         },
+    //       ],
+    //     },
+    //   ],
+
+    // offset: page ? (parseInt(page) - 1) * parseInt(limit) : 0,
+    // limit: limit ? parseInt(limit) : 0,
+    // order: [["createdAt", "ASC"]],
+    // });
+
+    res.status(200).json(comments);
+  } catch (e) {
+    res.status(500).json({ message: "something went wrong in Fetching Posts" });
+    console.trace(e);
+  }
+};
+
 export const fetchPost = async (
   req: Request,
   res: Response,
@@ -101,15 +210,91 @@ export const fetchPost = async (
   try {
     const post = await Post.findByPk(req.params.id, {
       include: [
-        { model: User },
+        {
+          model: User,
+          attributes: [
+            "id",
+            "firstName",
+            "lastName",
+            "email",
+            "profileImageUrl",
+            "RoleId",
+          ],
+        },
         { model: PostMedia },
-        { model: Comment, include: [{ model: User }] },
+        {
+          model: Comment,
+          include: [
+            {
+              model: User,
+              attributes: [
+                "id",
+                "firstName",
+                "lastName",
+                "email",
+                "profileImageUrl",
+                "RoleId",
+              ],
+            },
+            {
+              model: Comment,
+              include: [
+                {
+                  model: User,
+                  attributes: [
+                    "id",
+                    "firstName",
+                    "lastName",
+                    "email",
+                    "profileImageUrl",
+                    "RoleId",
+                  ],
+                },
+              ],
+            },
+          ],
+        },
       ],
     });
 
     res.status(200).json(post);
   } catch (e) {
     res.status(500).json({ message: "something went wrong in Fetching Post" });
+    console.trace(e);
+  }
+};
+
+export const deletePostImage = async (
+  req: postBody,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const post = await Post.findByPk(req.params.id, {
+      include: [{ model: PostMedia }],
+    });
+    if (!post) {
+      return res.status(400).json({ message: "Post does not found" });
+    }
+
+    if (req.user && req.user.userId !== post.UserId) {
+      return res
+        .status(400)
+        .json({ message: "Only orignal creator can delete the post" });
+    }
+    await PostMedia.destroy({
+      where: { id: req.params.imageId },
+    });
+
+    for (let postMedia of post.PostMedia) {
+      if (postMedia.id === parseInt(req.params.imageId)) {
+        deleteFile(postMedia.mediaUrl);
+      }
+    }
+
+    res.status(200).json({ message: "image deleted successfully" });
+  } catch (e) {
+    res.status(500).json({ message: "something went wrong in editing Post" });
     console.trace(e);
   }
 };

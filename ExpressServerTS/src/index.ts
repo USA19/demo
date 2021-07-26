@@ -4,6 +4,7 @@ import database from "./config/database";
 import authRoutes from "./routes/auth.routes";
 import roleRoutes from "./routes/role.routes";
 import postRoutes from "./routes/post.route";
+import commentRoutes from "./routes/comment.routes";
 // import path from "path";
 
 process
@@ -27,6 +28,7 @@ app.use("/images", express.static("./images"));
 app.use(authRoutes);
 app.use(roleRoutes);
 app.use(postRoutes);
+app.use(commentRoutes);
 
 // global.appRoot:string = path.resolve(__dirname);declare module NodeJS  {
 // declare module NodeJS {

@@ -2,8 +2,10 @@ import { Optional } from "sequelize";
 export interface commentInterface {
   id: number;
   comment: string;
-  rootId?: number;
+  CommentId?: number;
+  PostId?: number;
+  UserId?: number;
 }
 
 export interface CommentCreationAttributes
-  extends Optional<commentInterface, "id" | "rootId"> {}
+  extends Optional<commentInterface, "id"> {}

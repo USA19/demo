@@ -14,13 +14,14 @@ class Comment
   public id!: number; // Note that the `null assertion` `!` is required in strict mode.
   public comment!: string;
   rootId!: number;
-  // postId!: number;
+  PostId!: number;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+  public readonly Comments?: Comment[];
   public static associations: {
-    rootId: Association<Comment, Comment>;
+    CommentId: Association<Comment, Comment>;
     user: Association<Comment, User>;
-    postId: Association<Comment, Post>;
+    PostId: Association<Comment, Post>;
   };
 }
 
@@ -35,9 +36,6 @@ Comment.init(
     comment: {
       type: DataTypes.STRING,
     },
-    rootId: {
-      type: DataTypes.INTEGER,
-    },
   },
   {
     tableName: "comments",
@@ -46,7 +44,8 @@ Comment.init(
 );
 
 Comment.hasMany(Comment);
-Comment.belongsTo(Comment, { as: "root" });
+Comment.belongsTo(Comment);
+
 User.hasMany(Comment);
 Comment.belongsTo(User);
 Post.hasMany(Comment);
