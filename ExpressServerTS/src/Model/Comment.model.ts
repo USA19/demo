@@ -17,7 +17,7 @@ class Comment
   PostId!: number;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
-  public readonly Comments?: Comment[];
+  public Comments?: Comment[];
   public static associations: {
     CommentId: Association<Comment, Comment>;
     user: Association<Comment, User>;
@@ -45,7 +45,7 @@ Comment.init(
 
 Comment.hasMany(Comment);
 Comment.belongsTo(Comment);
-
+// Comment.isHierarchy();
 User.hasMany(Comment);
 Comment.belongsTo(User);
 Post.hasMany(Comment);

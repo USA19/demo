@@ -5,6 +5,7 @@ import Post from "../Model/Post.model";
 import PostMedia from "../Model/PostMedia.model";
 import User from "../Model/user.model";
 import Comment from "../Model/Comment.model";
+// import {commentInterface} from "../interfaces/comment"
 interface postBody extends Request {
   user?: {
     isAuthenticated: boolean;
@@ -145,57 +146,61 @@ export const fetchPosts = async (
     const limit: string = String(req.query.limit) || "10";
     // console.log("===============>>>>>>>>>>", page, limit);
     // const { page, limit = 0 } = req.query;
-    const comments = await Comment.findAll({
-      include: [
-        {
-          model: Comment,
-          // include: [
-          //   {
-          //     model: Comment,
-          //     include: [
-          //       {
-          //         model: Comment,
-          //       },
-          //     ],
-          //   },
-          // ],
-        },
-      ],
-    });
-    // const post = await Post.findAll({
+    // const comments = await Comment.findAll({
+    //   // { include: [{ all: true }] }
     //   include: [
     //     {
-    //       model: User,
-    //       as: "Author",
-    //       attributes: [
-    //         "id",
-    //         "firstName",
-    //         "lastName",
-    //         "email",
-    //         "profileImageUrl",
-    //         "RoleId",
-    //       ],
-    //     },
-    //     { model: PostMedia },
-    //     {
     //       model: Comment,
-    //       as: "Commenter",
-    //       nested: true,
     //       include: [
     //         {
-    //           all: true,
-    //           nested: true,
+    //           model: Comment,
+    //           include: [
+    //             {
+    //               model: Comment,
+    //             },
+    //           ],
     //         },
     //       ],
     //     },
     //   ],
-
-    // offset: page ? (parseInt(page) - 1) * parseInt(limit) : 0,
-    // limit: limit ? parseInt(limit) : 0,
-    // order: [["createdAt", "ASC"]],
     // });
 
-    res.status(200).json(comments);
+    const posts = await Post.findAll({
+      include: [
+        {
+          model: User,
+
+          attributes: [
+            "id",
+            "firstName",
+            "lastName",
+            "email",
+            "profileImageUrl",
+            "RoleId",
+          ],
+        },
+        { model: PostMedia },
+        {
+          model: Comment,
+          include: [
+            {
+              model: Comment,
+              include: [
+                {
+                  model: Comment,
+                },
+              ],
+            },
+          ],
+        },
+      ],
+
+      // offset: page ? (parseInt(page) - 1) * parseInt(limit) : 0,
+      // limit: limit ? parseInt(limit) : 0,
+      order: [["createdAt", "DESC"]],
+    });
+
+    res.status(200).json(posts);
   } catch (e) {
     res.status(500).json({ message: "something went wrong in Fetching Posts" });
     console.trace(e);

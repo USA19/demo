@@ -4,12 +4,13 @@ import { Route, Router } from "react-router-dom";
 import { authRoutes, AppRoutes } from "./Routes/appRoutes";
 import FullPageLoader from "./Components/FullPageLoader";
 import { AuthContext } from "./Context/AuthContext/AuthContext";
+import { PostProvider } from "./Context/PostContext/PostContext";
 import Alert from "./Components/Alert";
 function App() {
   const { isSignedIn, loading } = useContext(AuthContext);
 
   return (
-    <>
+    <PostProvider>
       <Alert />
 
       {loading ? <FullPageLoader /> : ""}
@@ -30,7 +31,7 @@ function App() {
               />
             ))}
       </Router>
-    </>
+    </PostProvider>
   );
 }
 

@@ -11,7 +11,7 @@ export default makeStyles((theme) => ({
     padding: theme.spacing(2),
     position: "absolute",
     top: "30%",
-    left: "20%",
+    // left: "20%",
     width: "100%",
   },
   form: {

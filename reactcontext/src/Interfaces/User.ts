@@ -12,7 +12,6 @@ export interface signin {
   password: string;
 }
 
-
 export interface signinResponse {
   user: {
     firstName: string;
@@ -24,3 +23,17 @@ export interface signinResponse {
   };
   token: string;
 }
+
+
+export interface PostUser {
+  firstName: string;
+  lastName: string;
+  email: string;
+ 
+  date_of_birth: Date;
+  RoleId: number;
+  profileImageUrl?:string
+}
+
+
+
