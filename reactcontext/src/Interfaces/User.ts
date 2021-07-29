@@ -29,7 +29,7 @@ export interface PostUser {
   firstName: string;
   lastName: string;
   email: string;
- 
+  id: number;
   date_of_birth: Date;
   RoleId: number;
   profileImageUrl?:string

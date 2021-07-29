@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import Navbar  from "./Navbar/Navbar";
 import history from "./history";
 import { Route, Router } from "react-router-dom";
 import { authRoutes, AppRoutes } from "./Routes/appRoutes";
@@ -15,6 +16,7 @@ function App() {
 
       {loading ? <FullPageLoader /> : ""}
       <Router history={history}>
+        <Navbar />
         {!isSignedIn
           ? authRoutes.map((route) => (
               <Route

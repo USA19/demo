@@ -1,18 +1,10 @@
 import React, { FC, useState } from "react";
-// import { loginApi, signupApi } from "./Api";
+
 import history from "../../history";
 import { User } from "../../Interfaces/User";
 import { removeToken } from "../../Utils/Token";
 
-// interface auth {
-// children: JSX.Element[];
-// isSignedIn: boolean;
-// user: null | User;
-// loading: boolean;
-// handleSignup: (data: User) => {};
-// handleSignout: () => {};
-// handleSignin: (data: signin) => {};
-// }
+
 export const AuthContext = React.createContext({
   isSignedIn: false,
   user: null,
@@ -20,7 +12,7 @@ export const AuthContext = React.createContext({
   setIsSignedIn: (data: boolean) => {},
   setUser: (data: User | null) => {},
   handleSignout: () => {},
-  Loader: () => {},
+  setLoading: (value: React.SetStateAction<boolean>) => {},
 });
 
 export const AuthProvider: FC = (props): JSX.Element => {
@@ -38,10 +30,8 @@ export const AuthProvider: FC = (props): JSX.Element => {
   };
   const handleSignout = () => {
     removeToken();
+    isSignedInSetter(false);
     history.push("/");
-  };
-  const Loader = () => {
-    setLoading(!loading);
   };
 
   return (
@@ -53,7 +43,7 @@ export const AuthProvider: FC = (props): JSX.Element => {
         setIsSignedIn,
         handleSignout,
         setUser,
-        Loader,
+        setLoading,
       }}
     >
       {children}

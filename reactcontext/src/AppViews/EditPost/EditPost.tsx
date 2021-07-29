@@ -1,7 +1,7 @@
-import React, { useState, useContext } from "react";
-import { AuthContext } from "../../../Context/AuthContext/AuthContext";
-import { PostContext } from "../../../Context/PostContext/PostContext";
-import PreviewMedia from "./PrevieMedia";
+import React, { useState, useContext, useEffect } from "react";
+import { AuthContext } from "../../Context/AuthContext/AuthContext";
+import { PostContext } from "../../Context/PostContext/PostContext";
+import {uploadedMedia} from "../../Interfaces/Post"
 import {
   createStyles,
   Theme,
@@ -22,6 +22,7 @@ import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import InputBase from "@material-ui/core/InputBase";
+import PreviewMedia from "./Components/PreviewPost";
 const styles = (theme: Theme) =>
   createStyles({
     root: {
@@ -111,31 +112,32 @@ const DialogActions = withStyles((theme: Theme) => ({
   },
 }))(MuiDialogActions);
 
-export default function CustomizedDialogs({ open, setOpen }: props) {
+export default function EditPost({ open, setOpen }: props) {
   const classes = useStyles();
   const context = useContext(AuthContext);
   const postContext = useContext(PostContext);
+  const [uploadeMedia, setUploadeMedia] = useState<uploadedMedia[]>([]);
   const [media, setMedia] = useState<FileList | null>(null);
   const [description, setDescription] = useState<string>("");
 
+  useEffect(() => {
+    if (postContext.singlePost) {
+      if (postContext.singlePost.PostMedia.length !== 0) {
+        setUploadeMedia(postContext.singlePost.PostMedia);
+      }
+      setDescription(postContext.singlePost.description);
+    }
+  }, [postContext.singlePost]);
   const handleClose = () => {
     setOpen(false);
     setMedia(null);
     setDescription("");
   };
 
-  const handleCreatePost = () => {
+  const handleEditPost = () => {
     if (description.length !== 0 || media.length !== 0) {
       const data = new FormData();
       data.append("description", description);
-
-      if (media) {
-        // for (let i = 0; i < media.length; i++) {
-        Object.keys(media).map((key, i) => {
-          return data.append("images[]", media[key]);
-        });
-      }
-      console.log(media);
 
       postContext.CreatePost(data);
 
@@ -145,7 +147,6 @@ export default function CustomizedDialogs({ open, setOpen }: props) {
   const handleDescriptionChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    e.preventDefault();
     setDescription(e.target.value);
   };
   const handleMedia = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -207,16 +208,26 @@ export default function CustomizedDialogs({ open, setOpen }: props) {
               </Button>
             </label>
           </Box>
-          <PreviewMedia urls={media} setUrls={setMedia} />
+          <PreviewMedia
+            urls={media}
+            setUrls={setMedia}
+            uploadeMedia={uploadeMedia}
+            setUploadeMedia={setUploadeMedia}
+            postId={
+              postContext && postContext.singlePost
+                ? postContext.singlePost.id
+                : null
+            }
+          />
         </DialogContent>
         <DialogActions>
           <Button
             autoFocus
-            onClick={handleCreatePost}
+            onClick={handleEditPost}
             color="primary"
             variant="contained"
           >
-            Post
+            update Post
           </Button>
         </DialogActions>
       </Dialog>

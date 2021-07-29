@@ -22,37 +22,38 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 type props = {
-  urls: FileList[];
-  setUrls: React.Dispatch<React.SetStateAction<FileList[]>>;
+  urls: FileList | null;
+  setUrls: React.Dispatch<React.SetStateAction<FileList>>;
 };
 export default function PreviewMededia({ urls, setUrls }: props): JSX.Element {
   const classes = useStyles();
-  const handleDeleteImage = (index) => {
-    const list = [...urls];
-    list.splice(index, 1);
+
+  const handleDeleteImage = (key) => {
+    const list = { ...urls };
+    delete list[key];
+    // list.splice(index, 1);
     setUrls(list);
   };
   return (
-    urls.length !== 0 && (
+    urls && (
       <Box>
-        {urls.map((url, i) => {
-          console.log("url:::::", url);
-
-          return (
-            <Card className={classes.root} key={i}>
-              <CardMedia
-                className={classes.media}
-                image={URL.createObjectURL(url[0])}
-              />
-              <IconButton
-                onClick={() => handleDeleteImage(i)}
-                className={classes.close}
-              >
-                <HighlightOffIcon />
-              </IconButton>
-            </Card>
-          );
-        })}
+        {Object.keys(urls).length !== 0 &&
+          Object.keys(urls).map((key, i) => {
+            return (
+              <Card className={classes.root} key={i}>
+                <CardMedia
+                  className={classes.media}
+                  image={URL.createObjectURL(urls[key])}
+                />
+                <IconButton
+                  onClick={() => handleDeleteImage(key)}
+                  className={classes.close}
+                >
+                  <HighlightOffIcon />
+                </IconButton>
+              </Card>
+            );
+          })}
       </Box>
     )
   );

@@ -20,6 +20,7 @@ export const CreatePost = async (
   next: NextFunction
 ) => {
   try {
+    console.log("\n\n\n\n\n\nReq body ", req.body);
     let post = await Post.create({
       description: req.body.description,
       UserId: req.user ? req.user.userId : 1,
@@ -182,12 +183,38 @@ export const fetchPosts = async (
         { model: PostMedia },
         {
           model: Comment,
+
           include: [
             {
+              model: User,
+
+              attributes: [
+                "id",
+                "firstName",
+                "lastName",
+                "email",
+                "profileImageUrl",
+                "RoleId",
+              ],
+            },
+            {
               model: Comment,
+
               include: [
                 {
                   model: Comment,
+                },
+                {
+                  model: User,
+
+                  attributes: [
+                    "id",
+                    "firstName",
+                    "lastName",
+                    "email",
+                    "profileImageUrl",
+                    "RoleId",
+                  ],
                 },
               ],
             },

@@ -2,6 +2,7 @@ import { Association, DataTypes, Model } from "sequelize";
 import sequelize from "../config/database";
 import User from "./user.model";
 import Post from "./Post.model";
+
 import {
   commentInterface,
   CommentCreationAttributes,
@@ -42,7 +43,7 @@ Comment.init(
     sequelize, // passing the `sequelize` instance is required
   }
 );
-
+// Comment.isHierarchy();
 Comment.hasMany(Comment);
 Comment.belongsTo(Comment);
 // Comment.isHierarchy();

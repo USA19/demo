@@ -9,7 +9,7 @@ export interface Post {
   postmedia?: [];
   comments?: string[];
   PostMedia?: PostImage[];
-  Comments?: any[];
+  Comments?: commentInterface[];
   User: PostUser;
 }
 
@@ -21,7 +21,20 @@ interface PostImage {
   updatedAt?: Date;
 }
 
+export interface commentInterface {
+  id: number;
+  comment: string;
+  CommentId?: number;
+  PostId?: number;
+  UserId?: number;
+  User: PostUser;
+  Comments: commentInterface[];
+}
 
-export interface createPost {
-  description: string;
+export interface uploadedMedia {
+  id: number;
+  mediaUrl: string;
+  createdAt: Date;
+  updatedAt: Date;
+  PostId: number;
 }

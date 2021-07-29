@@ -20,7 +20,7 @@ import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import { useFormik } from "formik";
 export default function SignUp() {
-  const { Loader } = useContext(AuthContext);
+  const { setLoading } = useContext(AuthContext);
   const { showServerError, showSignupError } = useContext(AlertContext);
   const classes = useStyles();
   const [passwordType, setPasswordType] = useState("password");
@@ -48,7 +48,7 @@ export default function SignUp() {
       validationSchema,
       onSubmit: (values, { resetForm }) => {
         try {
-          Loader();
+          setLoading(true);
 
           signupApi({
             firstName: values.firstName,
@@ -58,9 +58,10 @@ export default function SignUp() {
             date_of_birth: new Date(values.date_of_birth),
             roleId: 1,
           });
-          Loader();
+          setLoading(false);
         } catch (e) {
-          Loader();
+          setLoading(false);
+
           if (e.response && e.response.status === 400) {
             showSignupError();
           } else {

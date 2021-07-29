@@ -25,7 +25,7 @@ export const getPost = async (id: number): Promise<Post> => {
   }
 };
 
-export const createPost = async (data: Post): Promise<Post> => {
+export const createPost = async (data: FormData): Promise<Post> => {
   try {
     const response: AxiosResponse<Post> = await server.post(
       "/uploadPost",
@@ -51,7 +51,7 @@ export const editPost = async (data: Post): Promise<Post> => {
   }
 };
 
-export const deletePost = async (id: number): Promise<boolean> => {
+export const removePost = async (id: number): Promise<boolean> => {
   try {
     await server.delete(`/deletePost/${id}`);
     return true;
@@ -71,5 +71,23 @@ export const deletePostImage = async (
   } catch (e) {
     console.log(e);
     return false;
+  }
+};
+
+export const addCommentToPostApi = async (
+  id: number,
+  rootId: number | null,
+  comment: string
+): Promise<Post> => {
+  try {
+    const response = await server.post(`/addComment/${id}`, {
+      rootId,
+      comment,
+    }); //postId
+
+    return response.data;
+  } catch (e) {
+    console.log(e);
+    return e;
   }
 };

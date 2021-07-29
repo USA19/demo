@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+//  import { useQuery } from "react-query";
 import { AuthContext } from "../../Context/AuthContext/AuthContext";
 import { AlertContext } from "../../Context/AlertContext/AlertContext";
 import { useStyles } from "../styles";
@@ -24,7 +25,7 @@ export default function SignIn() {
   const history = useHistory();
   const classes = useStyles();
   const [passwordType, setPasswordType] = useState("password");
-  const { setUser, setIsSignedIn, Loader } = useContext(AuthContext);
+  const { setUser, setIsSignedIn, setLoading } = useContext(AuthContext);
   const { showServerError, showLoginError } = useContext(AlertContext);
 
   const handleClickShowPassword = () => {
@@ -41,18 +42,22 @@ export default function SignIn() {
       onSubmit: async (values, { resetForm }) => {
         try {
           // Loader();
+          setLoading(true);
           const user = await loginApi(values);
           setIsSignedIn(true);
           setUser(user);
+          setLoading(false);
 
           history.push("/");
           // Loader();
         } catch (e) {
           // Loader();
           if (e.response && e.response.status === 400) {
-            Loader();
+            setLoading(false);
+
             showLoginError();
           } else {
+            setLoading(false);
             showServerError();
           }
         }

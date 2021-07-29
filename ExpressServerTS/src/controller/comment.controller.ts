@@ -137,3 +137,52 @@ export const postAddComment = async (
 //     console.trace(e);
 //   }
 // };
+
+export const getComments = async (
+  req: authBody,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+  
+    const commments = await Comment.findAll({
+      include: [
+        {
+          model: User,
+          attributes: [
+            "id",
+            "firstName",
+            "lastName",
+            "email",
+            "profileImageUrl",
+            "RoleId",
+          ],
+        },
+        {
+          model: Comment,
+
+          include: [
+            {
+              model: User,
+              attributes: [
+                "id",
+                "firstName",
+                "lastName",
+                "email",
+                "profileImageUrl",
+                "RoleId",
+              ],
+            },
+          ],
+        },
+      ],
+      raw: true,
+    });
+    res.status(200).json(commments);
+  } catch (e) {
+    res
+      .status(500)
+      .json({ message: "something went wrong in getting Comment to Post" });
+    console.trace(e);
+  }
+};
