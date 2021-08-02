@@ -13,9 +13,9 @@ function App() {
   const { fetchPosts } = useContext(PostContext);
   useEffect(() => {
     const token = getToken();
-    console.log(token);
+
     if (token) {
-      fetchPosts();
+      fetchPosts("1", "10");
       getLoggedInUser();
     }
   }, []);

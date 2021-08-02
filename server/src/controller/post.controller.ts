@@ -1,20 +1,12 @@
-// import Role from "../Model/Role.model";
 import { Request, NextFunction, Response } from "express";
 import { deleteFile } from "../utils/imageDelete";
 import Post from "../Model/Post.model";
 import PostMedia from "../Model/PostMedia.model";
 import User from "../Model/user.model";
 import Comment from "../Model/Comment.model";
-// import Sequelize from "sequelize";
-// const Op = Sequelize.Op;
 
-// import {commentInterface} from "../interfaces/comment"
 interface postBody extends Request {
-  user?: {
-    isAuthenticated: boolean;
-    userId: number | undefined;
-    isAdmin: boolean;
-  };
+  userId?: number | undefined;
 }
 
 export const CreatePost = async (
@@ -25,7 +17,7 @@ export const CreatePost = async (
   try {
     let post = await Post.create({
       description: req.body.description,
-      UserId: req.user ? req.user.userId : 1,
+      UserId: req.userId,
     });
 
     if (req.files) {
@@ -144,7 +136,7 @@ export const editPost = async (
       return res.status(400).json({ message: "Post does not found" });
     }
 
-    if (req.user && req.user.userId !== post.UserId) {
+    if (req.userId !== post.UserId) {
       return res
         .status(400)
         .json({ message: "Only orignal creator can delete the post" });
@@ -186,7 +178,7 @@ export const deletePost = async (
       return res.status(400).json({ message: "Post does not found" });
     }
 
-    if (req.user && req.user.userId !== post.UserId) {
+    if (req.userId !== post.UserId) {
       return res
         .status(400)
         .json({ message: "Only orignal creator can delete the post" });
@@ -212,28 +204,8 @@ export const fetchPosts = async (
   next: NextFunction
 ) => {
   try {
-    const page: string = String(req.query.page) || "1";
-    const limit: string = String(req.query.limit) || "10";
-    // console.log("===============>>>>>>>>>>", page, limit);
-    // const { page, limit = 0 } = req.query;
-    // const comments = await Comment.findAll({
-    //   // { include: [{ all: true }] }
-    //   include: [
-    //     {
-    //       model: Comment,
-    //       include: [
-    //         {
-    //           model: Comment,
-    //           include: [
-    //             {
-    //               model: Comment,
-    //             },
-    //           ],
-    //         },
-    //       ],
-    //     },
-    //   ],
-    // });
+    const page: string = req.query.page ? String(req.query.page) : "1";
+    const limit: string = req.query.page ? String(req.query.limit) : "10";
 
     const posts = await Post.findAll({
       include: [
@@ -308,13 +280,21 @@ export const fetchPosts = async (
         },
       ],
 
-      // offset: page ? (parseInt(page) - 1) * parseInt(limit) : 0,
-      // limit: limit ? parseInt(limit) : 0,
+      offset: (parseInt(page) - 1) * parseInt(limit),
+      limit: parseInt(limit),
       order: [["createdAt", "DESC"]],
     });
 
-    // res.status(200).json({ data: posts, length: posts.length });
-    res.status(200).json(posts);
+    // const totalPosts = await Post.findAndCountAll();
+    const count = await Post.count({
+      distinct: true,
+      col: "id",
+    });
+    console.log("=======================>", count);
+    const pages = Math.ceil(count / parseInt(limit));
+    console.log(pages);
+    res.status(200).json({ posts: posts, count: pages });
+    // res.status(200).json(posts);
   } catch (e) {
     res.status(500).json({ message: "something went wrong in Fetching Posts" });
     console.trace(e);
@@ -396,7 +376,7 @@ export const deletePostImage = async (
       return res.status(400).json({ message: "Post does not found" });
     }
 
-    if (req.user && req.user.userId !== post.UserId) {
+    if (req.userId !== post.UserId) {
       return res
         .status(400)
         .json({ message: "Only orignal creator can delete the post" });

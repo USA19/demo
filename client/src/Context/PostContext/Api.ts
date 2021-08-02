@@ -1,17 +1,13 @@
 import server from "../BaseApi/server";
-import { Post } from "../../Interfaces/Post";
+import { Post, PostInterface } from "../../Interfaces/Post";
 
 import { AxiosResponse } from "axios";
 
-export const getPosts = async (): Promise<Post[]> => {
-  try {
-    const response = await server.get("/getPosts");
-
-    return response.data;
-  } catch (e) {
-    console.log(e);
-    return e;
-  }
+export const getPosts = (
+  page = "1",
+  limit = "10"
+): Promise<AxiosResponse<PostInterface>> => {
+  return server.get(`/getPosts?page=${page}&&limit=${limit}`);
 };
 
 export const getPost = async (id: number): Promise<Post> => {
@@ -25,69 +21,35 @@ export const getPost = async (id: number): Promise<Post> => {
   }
 };
 
-export const createPost = async (data: FormData): Promise<Post> => {
-  try {
-    const response: AxiosResponse<Post> = await server.post(
-      "/uploadPost",
-      data
-    );
-    return response.data;
-  } catch (e) {
-    console.log(e);
-    return e;
-  }
+export const createPost = (data: FormData): Promise<AxiosResponse<Post>> => {
+  return server.post("/uploadPost", data);
 };
 
-export const updatePost = async (id: number, data: FormData): Promise<Post> => {
-  try {
-    const response: AxiosResponse<Post> = await server.put(
-      `/editPost/${id}`,
-      data
-    );
-    return response.data;
-  } catch (e) {
-    console.log(e);
-    return e;
-  }
+export const updatePost = async (
+  id: number,
+  data: FormData
+): Promise<AxiosResponse<Post>> => {
+  return await server.put(`/editPost/${id}`, data);
 };
 
-export const removePost = async (id: number): Promise<boolean> => {
-  try {
-    await server.delete(`/deletePost/${id}`);
-    return true;
-  } catch (e) {
-    console.log(e);
-    return false;
-  }
+export const removePost = (id: number): Promise<AxiosResponse> => {
+  return server.delete(`/deletePost/${id}`);
 };
 
 export const removePostImage = async (
   id: number,
   imageId: number
-): Promise<boolean> => {
-  try {
-    await server.delete(`/deletePostImage/${id}/${imageId}`);
-    return true;
-  } catch (e) {
-    console.log(e);
-    return false;
-  }
+): Promise<AxiosResponse> => {
+  return server.delete(`/deletePostImage/${id}/${imageId}`);
 };
 
 export const addCommentToPostApi = async (
   id: number,
   rootId: number | null,
   comment: string
-): Promise<Post> => {
-  try {
-    const response = await server.post(`/addComment/${id}`, {
-      rootId,
-      comment,
-    }); //postId
-
-    return response.data;
-  } catch (e) {
-    console.log(e);
-    return e;
-  }
+): Promise<AxiosResponse<Post>> => {
+  return server.post(`/addComment/${id}`, {
+    rootId,
+    comment,
+  }); //postId
 };

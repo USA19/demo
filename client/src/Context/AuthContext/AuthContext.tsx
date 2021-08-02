@@ -21,7 +21,7 @@ export const AuthProvider: FC = (props): JSX.Element => {
   const [user, userSetter] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const setUser = (user: User | null) => {
+  const setUser = (user: User) => {
     userSetter(user);
   };
 
@@ -35,9 +35,11 @@ export const AuthProvider: FC = (props): JSX.Element => {
   };
 
   const getLoggedInUser = async () => {
+    setLoading(true);
     const user = await loggedInUserApi();
     isSignedInSetter(true);
     userSetter(user);
+    setLoading(false);
   };
 
   return (

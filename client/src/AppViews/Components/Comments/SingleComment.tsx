@@ -39,6 +39,7 @@ type Iprop = {
   setRootId: (value: React.SetStateAction<number>) => void;
   rootId: number;
   showReply: boolean;
+  childs: commentInterface[];
 };
 function SingleComment({
   postId,
@@ -48,15 +49,30 @@ function SingleComment({
   setShowReply,
   rootId,
   setRootId,
+  childs,
 }: Iprop) {
   const classes = useStyles();
 
   // const [showReply, setShowReply] = useState(false);
   // const [rootId, setRootId] = useState<number | null>(null);
   const handleShowReply = (id: number | null) => {
-    console.log(id);
-    setRootId(id);
+    // console.log(id);
+    if (
+      childs.length !== 0 &&
+      childs[0].Comments.length !== 0 &&
+      childs[0].Comments.length > 0
+    ) {
+      if (id === childs[0].Comments[childs[0].Comments.length - 1].id) {
+        setRootId(childs[0].id);
+      } else {
+        setRootId(id);
+      }
+    } else {
+      setRootId(id);
+    }
+    // setRootId(id);
     setShowReply(true);
+    // console.log("rootId=======================>>>>>>>", rootId);
   };
   //  const childComments = () => allComments.filter((c) => c.parent_id === comment.id);
   return (
@@ -105,6 +121,7 @@ function SingleComment({
               setShowReply={setShowReply}
               rootId={rootId}
               setRootId={setRootId}
+              childs={childs}
             />
           </Box>
         ))}

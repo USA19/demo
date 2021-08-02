@@ -10,11 +10,7 @@ interface loginBody extends Request {
 }
 
 interface authBody extends Request {
-  user?: {
-    isAuthenticated: boolean;
-    userId: number | undefined;
-    isAdmin: boolean;
-  };
+  userId?: number | undefined;
 }
 
 interface signupBody extends Request {
@@ -89,11 +85,8 @@ const getLoggedInUser = async (
   next: NextFunction
 ) => {
   try {
-    if (!req.user) throw new Error("no user found");
-    const user = await UserModel.findByPk(req.user?.userId);
-    console.log(req.user ? req.user.userId : "");
-    console.log("==================>>>>>>>>>>>>>>>>>", user);
-    //const user = await User.findOne({ email: email }).populate('cart.items.productId');
+    const user = await UserModel.findByPk(req.userId);
+
     if (!user) {
       return res.status(400).json({ message: "No User Found" });
     }

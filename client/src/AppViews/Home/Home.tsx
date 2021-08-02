@@ -1,18 +1,20 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { PostContext } from "../../Context/PostContext/PostContext";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import PostSomething from "./components/PostSomething";
 import PostCard from "../Components/PostCard/PostCard";
+import PaginationComponent from "../../Components/Pagination";
 // import useStyles from "./styles";
 
 export default function Home() {
   const context = useContext(PostContext);
-  console.log(context.posts); 
+  const [page, setPage] = useState("1");
+  const [limit] = useState("10");
   useEffect(() => {
-    context.fetchPosts();
-  }, []);
+    context.fetchPosts(page, limit);
+  }, [page]);
   return (
     <Container maxWidth="sm" style={{ marginTop: 20 }}>
       <Grid container direction="row" justify="center" alignItems="center">
@@ -23,6 +25,7 @@ export default function Home() {
           <PostCard posts={context.posts} />
         </Grid>
       </Grid>
+      <PaginationComponent setPage={setPage} />
     </Container>
   );
 }

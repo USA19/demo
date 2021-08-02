@@ -38,3 +38,8 @@ export interface uploadedMedia {
   updatedAt: Date;
   PostId: number;
 }
+
+export interface PostInterface {
+  posts: Post[];
+  count: number;
+}
