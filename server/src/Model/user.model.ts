@@ -1,7 +1,8 @@
 import { Association, DataTypes, Model } from "sequelize";
-import sequelize from "../config/database";
+
 import { UserInterface, UserCreationAttributes } from "../interfaces/user";
 import Role from "./Role.model";
+import sequelize from "../config/database";
 // const User: ModelDefined<UserInterface, UserCreationAttributes> =
 //   sequelize.define(
 //     "User",

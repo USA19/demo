@@ -12,6 +12,11 @@ interface authBody extends Request {
 // const User = new UserModel();
 const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    if (!req.body.email || !req.body.password) {
+      return res
+        .status(400)
+        .json({ message: "email and password both are required" });
+    }
     const email = req.body.email;
     const password = req.body.password;
     const user = await UserModel.findOne({
@@ -19,7 +24,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     });
 
     if (!user) {
-      return res 
+      return res
         .status(400)
         .json({ message: "User With this email does not exist" });
     }
@@ -42,6 +47,17 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
 const signup = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    if (
+      !req.body.email ||
+      !req.body.password ||
+      !req.body.firstName ||
+      !req.body.lastName ||
+      !req.body.date_of_birth
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Required Fields are not provided" });
+    }
     const userBody = req.body as UserInterface;
     const email = userBody.email;
     const password = userBody.password;

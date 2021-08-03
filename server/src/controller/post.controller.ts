@@ -15,6 +15,11 @@ export const CreatePost = async (
   next: NextFunction
 ) => {
   try {
+    if (!req.body.description && !req.files) {
+      return res
+        .status(400)
+        .json({ message: "Required Fields are not provided" });
+    }
     let post = await Post.create({
       description: req.body.description,
       UserId: req.userId,
