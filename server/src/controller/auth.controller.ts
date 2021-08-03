@@ -5,17 +5,10 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import config from "../config/config";
 
-interface loginBody extends Request {
-  body: { email: string; password: string };
-}
-
 interface authBody extends Request {
   userId?: number | undefined;
 }
 
-interface signupBody extends Request {
-  body: UserInterface;
-}
 // const User = new UserModel();
 const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -26,7 +19,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     });
 
     if (!user) {
-      return res
+      return res 
         .status(400)
         .json({ message: "User With this email does not exist" });
     }

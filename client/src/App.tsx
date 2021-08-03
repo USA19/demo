@@ -1,13 +1,15 @@
-import React, { useContext, useEffect } from "react";
+import { useContext, useEffect } from "react";
+import { Route, Router } from "react-router-dom";
+
 import Navbar from "./Navbar/Navbar";
 import history from "./history";
 import { getToken } from "./Utils/Token";
-import { Route, Router } from "react-router-dom";
 import { authRoutes, AppRoutes } from "./Routes/appRoutes";
 import FullPageLoader from "./Components/FullPageLoader";
 import { AuthContext } from "./Context/AuthContext/AuthContext";
 import { PostProvider, PostContext } from "./Context/PostContext/PostContext";
 import Alert from "./Components/Alert";
+
 function App() {
   const { isSignedIn, loading, getLoggedInUser } = useContext(AuthContext);
   const { fetchPosts } = useContext(PostContext);
@@ -23,7 +25,8 @@ function App() {
     <PostProvider>
       <Alert />
 
-      {loading ? <FullPageLoader /> : ""}
+      {loading && <FullPageLoader />}
+      
       <Router history={history}>
         <Navbar />
         {!isSignedIn

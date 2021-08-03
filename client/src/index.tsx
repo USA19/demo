@@ -1,20 +1,18 @@
-import React from "react";
+import { StrictMode } from "react";
 import ReactDOM from "react-dom";
-import { AlertProvider } from "./Context/AlertContext/AlertContext";
-import { QueryClient, QueryClientProvider } from "react-query";
-import { AuthProvider } from "./Context/AuthContext/AuthContext";
+
 import App from "./App";
 
-const queryClient = new QueryClient();
+import { AlertProvider } from "./Context/AlertContext/AlertContext";
+import { AuthProvider } from "./Context/AuthContext/AuthContext";
+
 ReactDOM.render(
-  <React.StrictMode>
-    <AuthProvider>
-      <AlertProvider>
-        <QueryClientProvider client={queryClient}>
-          <App />
-        </QueryClientProvider>
-      </AlertProvider>
-    </AuthProvider>
-  </React.StrictMode>,
+  <StrictMode>
+    <AlertProvider>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </AlertProvider>
+  </StrictMode>,
   document.getElementById("root")
 );

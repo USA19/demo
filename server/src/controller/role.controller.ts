@@ -1,13 +1,8 @@
 import Role from "../Model/Role.model";
 import { Request, NextFunction, Response } from "express";
 
-interface roleBody extends Request {
-  body: {
-    name: string;
-  };
-}
 export const postAddRole = async (
-  req: roleBody,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {

@@ -151,7 +151,7 @@ User.init(
 //   password: Sequelize.STRING,
 // });
 
-export default User;
-
 Role.hasOne(User);
 User.belongsTo(Role);
+
+export default User;

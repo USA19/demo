@@ -47,9 +47,9 @@ export const PostProvider: FC = (props): JSX.Element => {
   const fetchPosts = async (page = "1", limit = "10") => {
     try {
       const result: AxiosResponse<PostInterface> = await getPosts(page, limit);
-
-      setPosts(result.data.posts);
-      setTotalPostPages(result.data.count);
+      const {data: {posts, count}} = result
+      setPosts(posts);
+      setTotalPostPages(count);
     } catch (e) {
       console.log(e);
       showServerError();
@@ -127,7 +127,6 @@ export const PostProvider: FC = (props): JSX.Element => {
       const res = await addCommentToPostApi(postId, rootId, comment);
 
       let list: Post[] = [];
-      // const list = posts.filter((post) => post.id !== postId);
       for (let item of posts) {
         if (item.id === postId) {
           list.push(res.data);

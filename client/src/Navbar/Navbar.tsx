@@ -1,8 +1,7 @@
 import React, { useState, useContext } from "react";
 import { Link } from "react-router-dom";
-// import history from "../history";
+import { useStyles } from "./styles";
 import { AuthContext } from "../Context/AuthContext/AuthContext";
-import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Container from "@material-ui/core/Container";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -28,81 +27,6 @@ import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import { baseUrl } from "../Context/BaseApi/server";
 import Avatar from "@material-ui/core/Avatar";
 
-const drawerWidth = 240;
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    height: "70px",
-    justifyContent: "center",
-  },
-  title: {
-    textDecoration: "none",
-    // color: "black",
-    fontWeight: "bold",
-  },
-  linkText: {
-    textDecoration: "none",
-    fontSize: "16px",
-    marginLeft: "10px",
-    color: "white",
-    paddingTop: "5px",
-  },
-  buttonLink: {
-    textDecoration: "none",
-    color: "white",
-  },
-  avatar: {
-    backgroundColor: "blue",
-  },
-  profileMenue: {
-    display: "flex",
-    height: "50px",
-    cursor: "pointer",
-    marginTop: "15px",
-  },
-  icons: {
-    position: "absolute",
-    right: "40%",
-    "@media (max-width: 1030px)": {
-      position: "absolute",
-      right: "0",
-    },
-    "@media (max-width: 715px)": {
-      display: "none",
-    },
-  },
-  authButtons: {
-    position: "absolute",
-    right: "0",
-    "@media (max-width: 1030px)": {
-      display: "none",
-    },
-  },
-  menuButton: {
-    display: "none",
-    "@media (max-width: 1030px)": {
-      display: "block",
-    },
-  },
-  drawer: {
-    [theme.breakpoints.up("sm")]: {
-      width: drawerWidth,
-      flexShrink: 0,
-    },
-  },
-  drawerPaper: {
-    width: drawerWidth,
-  },
-  drawerHeader: {
-    display: "flex",
-    alignItems: "center",
-    padding: theme.spacing(0, 1),
-    // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
-    justifyContent: "flex-end",
-  },
-}));
-// window.innerWidth < 1030?
 export default function Nav() {
   const classes = useStyles();
   const { isSignedIn, user, handleSignout } = useContext(AuthContext);
@@ -239,10 +163,7 @@ export default function Nav() {
                     open={isMenuOpen}
                     onClose={handleMenuClose}
                   >
-                    <Link
-                      to="/myProfile"
-                      style={{ textDecoration: "none", color: "black" }}
-                    >
+                    <Link to="/myProfile" className={classes.link}>
                       <MenuItem onClick={handleMenuClose}>My Profile</MenuItem>
                     </Link>
                     <MenuItem onClick={handleLogout}>Signout</MenuItem>
@@ -275,87 +196,58 @@ export default function Nav() {
               <ListItemIcon>
                 <HomeOutlinedIcon />
               </ListItemIcon>
-              <ListItemText primary="Home" style={{ color: "black" }} />
+              <ListItemText primary="Home" className={classes.link} />
             </ListItem>
             {/* </Link> */}
             <Divider />
             {isSignedIn ? (
               <>
-                <Link
-                  to="/dashboard"
-                  color="primary"
-                  style={{ textDecoration: "none" }}
-                >
-                <ListItem button onClick={handleDrawerClose}>
-                  <ListItemIcon>
-                    <DashboardIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Dashboard" />
-                </ListItem>
+                <Link to="/dashboard" color="primary" className={classes.link}>
+                  <ListItem button onClick={handleDrawerClose}>
+                    <ListItemIcon>
+                      <DashboardIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Dashboard" />
+                  </ListItem>
                 </Link>
                 <Divider />
               </>
             ) : (
               ""
             )}
-            <Link
-              to={"/contactus"}
-              color="primary"
-              style={{ textDecoration: "none" }}
-            >
-            <ListItem button onClick={handleDrawerClose}>
-              <ListItemIcon>
-                <ContactPhoneIcon />
-              </ListItemIcon>
-              <ListItemText primary="Contactus" style={{ color: "black" }} />
-            </ListItem>
+            <Link to={"/contactus"} color="primary" className={classes.link}>
+              <ListItem button onClick={handleDrawerClose}>
+                <ListItemIcon>
+                  <ContactPhoneIcon />
+                </ListItemIcon>
+                <ListItemText primary="Contactus" className={classes.link} />
+              </ListItem>
             </Link>
             <Divider />
 
-            {/* <Link to="/aboutus" style={{ textDecoration: "none" }}>
-              <ListItem button onClick={handleDrawerClose}>
-                <ListItemIcon>
-                  <InfoIcon />
-                </ListItemIcon>
-                <ListItemText primary="Aboutus" style={{ color: "black" }} />
-              </ListItem>
-            </Link>
-            <Divider /> */}
-            {isSignedIn === false ? (
+            {!isSignedIn ? (
               <>
-                <Link
-                  to="/auth/Login"
-                  color="primary"
-                  style={{ textDecoration: "none" }}
-                >
+                <Link to="/auth/Login" color="primary" className={classes.link}>
                   <ListItem button onClick={handleDrawerClose}>
                     <ListItemIcon>
                       <AccountCircleOutlinedIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Login" style={{ color: "black" }} />
+                    <ListItemText primary="Login" className={classes.link} />
                   </ListItem>
                 </Link>
                 <Divider />
-                <Link
-                  to="/signup"
-                  color="primary"
-                  style={{ textDecoration: "none" }}
-                >
+                <Link to="/signup" color="primary" className={classes.link}>
                   <ListItem button onClick={handleDrawerClose}>
                     <ListItemIcon>
                       <PersonAddOutlinedIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Signup" style={{ color: "black" }} />
+                    <ListItemText primary="Signup" className={classes.link} />
                   </ListItem>
                 </Link>
               </>
             ) : (
               <>
-                <Link
-                  to="/myProfile"
-                  // color="primary"
-                  style={{ textDecoration: "none", color: "black" }}
-                >
+                <Link to="/myProfile" className={classes.link}>
                   <ListItem button>
                     <ListItemIcon onClick={handleDrawerClose}>
                       <AccountCircleOutlinedIcon />

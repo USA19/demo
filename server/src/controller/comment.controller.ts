@@ -4,8 +4,7 @@ import Post from "../Model/Post.model";
 import PostMedia from "../Model/PostMedia.model";
 import User from "../Model/user.model";
 import Comment from "../Model/Comment.model";
-// import DemoComment from "../Model/demoComments.mode";
-// import DemoReply from "../Model/demoRepliese.model";
+
 export const postAddComment = async (
   req: authBody,
   res: Response,
@@ -81,10 +80,6 @@ export const postAddComment = async (
           ],
         },
       ],
-
-      // offset: page ? (parseInt(page) - 1) * parseInt(limit) : 0,
-      // limit: limit ? parseInt(limit) : 0,
-      // order: [["createdAt", "DESC"]],
     });
     if (!post) {
       return res.status(400).json({ message: "Post not found" });

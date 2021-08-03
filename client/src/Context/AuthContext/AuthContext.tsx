@@ -1,17 +1,17 @@
-import React, { FC, useState } from "react";
+import { FC, useState, createContext, SetStateAction } from "react";
 import { loggedInUserApi } from "./Api";
 import history from "../../history";
 import { User } from "../../Interfaces/User";
 import { removeToken } from "../../Utils/Token";
 
-export const AuthContext = React.createContext({
+export const AuthContext = createContext({
   isSignedIn: false,
   user: null,
   loading: false,
   setIsSignedIn: (data: boolean) => {},
   setUser: (data: User | null) => {},
   handleSignout: () => {},
-  setLoading: (value: React.SetStateAction<boolean>) => {},
+  setLoading: (value: SetStateAction<boolean>) => {},
   getLoggedInUser: () => {},
 });
 
@@ -28,6 +28,7 @@ export const AuthProvider: FC = (props): JSX.Element => {
   const setIsSignedIn = (arg0: boolean) => {
     isSignedInSetter(arg0);
   };
+
   const handleSignout = () => {
     removeToken();
     isSignedInSetter(false);
@@ -35,11 +36,16 @@ export const AuthProvider: FC = (props): JSX.Element => {
   };
 
   const getLoggedInUser = async () => {
-    setLoading(true);
-    const user = await loggedInUserApi();
-    isSignedInSetter(true);
-    userSetter(user);
-    setLoading(false);
+    try {
+      setLoading(true);
+      const user = await loggedInUserApi();
+      isSignedInSetter(true);
+      userSetter(user);
+      setLoading(false);
+    } catch (e) {
+      setLoading(false);
+      console.log(e);
+    }
   };
 
   return (
