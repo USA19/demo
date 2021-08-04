@@ -8,12 +8,12 @@ export interface Post {
   updatedAt?: Date;
   postmedia?: [];
   comments?: string[];
-  PostMedia?: PostImage[];
+  PostMedia?: uploadedMedia[];
   Comments?: commentInterface[];
   User: PostUser;
 }
 
-interface PostImage {
+export interface PostImage {
   id: number;
   PostId: number;
   mediaUrl: string;
@@ -34,8 +34,8 @@ export interface commentInterface {
 export interface uploadedMedia {
   id: number;
   mediaUrl: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   PostId: number;
 }
 

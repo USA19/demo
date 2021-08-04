@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 import { AlertContext } from "../Context/AlertContext/AlertContext";
@@ -7,7 +7,7 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export default function MessageAlert() {
+const MessageAlert = (): JSX.Element => {
   const { open, message, severity, closeAlert } = useContext(AlertContext);
 
   return (
@@ -21,4 +21,6 @@ export default function MessageAlert() {
       <Alert severity={severity}>{message}</Alert>
     </Snackbar>
   );
-}
+};
+
+export default MessageAlert;

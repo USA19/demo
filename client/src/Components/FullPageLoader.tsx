@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 1000,
   },
 }));
-function FullPageLoader() {
+const FullPageLoader = (): JSX.Element => {
   const classes = useStyles();
 
   return (
@@ -28,16 +28,6 @@ function FullPageLoader() {
       <CircularProgress className={classes.loader} />
     </Box>
   );
-}
-
-//   {
-//   loading ? (
-//   <Box>
-//     <CircularProgress className={classes.loader} />
-//   </Box>
-// ) : (
-//   ""
-// );
-// }
+};
 
 export default FullPageLoader;

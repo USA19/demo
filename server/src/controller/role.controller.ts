@@ -7,7 +7,7 @@ export const postAddRole = async (
   next: NextFunction
 ) => {
   try {
-    let role = await Role.findOne({
+    let role: Role|null = await Role.findOne({
       where: {
         name: req.body.name.toLowerCase(),
       },
@@ -31,7 +31,7 @@ export const deleteRole = async (
   next: NextFunction
 ) => {
   try {
-    const role = await Role.findByPk(req.params.id);
+    const role: Role | null = await Role.findByPk(req.params.id);
     if (!role) {
       return res.status(400).json({ message: "no role exist with that id" });
     }

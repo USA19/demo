@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "blue",
   },
 }));
-export default function PostSomething() {
+const PostSomething = () => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   return (
@@ -42,7 +42,7 @@ export default function PostSomething() {
         <Grid item xs={10} sm={11}>
           <InputBase
             className={classes.sharePost}
-            placeholder="What is in your mind?"
+            placeholder="What is on your mind?"
             inputProps={{ "aria-label": "naked" }}
             fullWidth
             disabled
@@ -53,4 +53,6 @@ export default function PostSomething() {
       </Grid>
     </Box>
   );
-}
+};
+
+export default PostSomething;

@@ -13,12 +13,16 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
   },
 }));
-type Iprop = {
+interface ParentCommentProp {
   comment: commentInterface;
   postId: number;
   childs: commentInterface[];
-};
-export default function ParentComment({ comment, postId, childs }: Iprop) {
+}
+const ParentComment = ({
+  comment,
+  postId,
+  childs,
+}: ParentCommentProp): JSX.Element => {
   const classes = useStyles();
   const [showReply, setShowReply] = useState(false);
   const [rootId, setRootId] = useState<number | null>(null);
@@ -45,4 +49,5 @@ export default function ParentComment({ comment, postId, childs }: Iprop) {
       </>
     </Box>
   );
-}
+};
+export default ParentComment;

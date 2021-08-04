@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import { User } from "../../Interfaces/User";
+import { PostUser } from "../../Interfaces/User";
 export let validationSchema = yup.object({
   firstName: yup
     .string()
@@ -27,7 +27,7 @@ export let validationSchema = yup.object({
     .required("confirm your password"),
 });
 
-export const initialValues = (user: User | null) => {
+export const initialValues = (user: PostUser | null) => {
   return {
     firstName: user ? user.firstName : "",
     lastName: user ? user.lastName : "",

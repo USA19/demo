@@ -20,7 +20,7 @@ export const CreatePost = async (
         .status(400)
         .json({ message: "Required Fields are not provided" });
     }
-    let post = await Post.create({
+    let post: Post = await Post.create({
       description: req.body.description,
       UserId: req.userId,
     });
@@ -38,7 +38,7 @@ export const CreatePost = async (
       await PostMedia.bulkCreate(postMedia);
     }
 
-    let createdPost = await Post.findByPk(post.id, {
+    let createdPost: Post | null = await Post.findByPk(post.id, {
       include: [
         {
           model: User,
@@ -67,7 +67,7 @@ export const editPost = async (
   next: NextFunction
 ) => {
   try {
-    const post = await Post.findByPk(req.params.id, {
+    const post: Post | null = await Post.findByPk(req.params.id, {
       include: [
         {
           model: User,
@@ -176,7 +176,7 @@ export const deletePost = async (
   next: NextFunction
 ) => {
   try {
-    const post = await Post.findByPk(req.params.id, {
+    const post: Post | null = await Post.findByPk(req.params.id, {
       include: [{ model: PostMedia }],
     });
     if (!post) {
@@ -188,9 +188,9 @@ export const deletePost = async (
         .status(400)
         .json({ message: "Only orignal creator can delete the post" });
     }
-    const deletedPost = await Post.destroy({ where: { id: req.params.id } });
+    await Post.destroy({ where: { id: req.params.id } });
 
-    const media = await PostMedia.destroy({ where: { PostId: req.params.id } });
+    await PostMedia.destroy({ where: { PostId: req.params.id } });
     if (post.PostMedia.length !== 0) {
       for (let postMedia of post.PostMedia) {
         deleteFile(postMedia.mediaUrl);
@@ -212,7 +212,7 @@ export const fetchPosts = async (
     const page: string = req.query.page ? String(req.query.page) : "1";
     const limit: string = req.query.page ? String(req.query.limit) : "10";
 
-    const posts = await Post.findAll({
+    const posts: Post[] = await Post.findAll({
       include: [
         {
           model: User,
@@ -295,7 +295,7 @@ export const fetchPosts = async (
       distinct: true,
       col: "id",
     });
-    console.log("=======================>", count);
+    // console.log("=======================>", count);
     const pages = Math.ceil(count / parseInt(limit));
     console.log(pages);
     res.status(200).json({ posts: posts, count: pages });
@@ -312,7 +312,7 @@ export const fetchPost = async (
   next: NextFunction
 ) => {
   try {
-    const post = await Post.findByPk(req.params.id, {
+    const post: Post | null = await Post.findByPk(req.params.id, {
       include: [
         {
           model: User,
@@ -374,7 +374,7 @@ export const deletePostImage = async (
   next: NextFunction
 ) => {
   try {
-    const post = await Post.findByPk(req.params.id, {
+    const post: Post | null = await Post.findByPk(req.params.id, {
       include: [{ model: PostMedia }],
     });
     if (!post) {

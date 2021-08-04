@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-type Iprop = {
+type SingleCommentProp = {
   postId: number;
   comment: commentInterface;
   childComments: commentInterface[];
@@ -41,7 +41,7 @@ type Iprop = {
   showReply: boolean;
   childs: commentInterface[];
 };
-function SingleComment({
+const SingleComment = ({
   postId,
   comment,
   childComments,
@@ -50,7 +50,7 @@ function SingleComment({
   rootId,
   setRootId,
   childs,
-}: Iprop) {
+}: SingleCommentProp): JSX.Element => {
   const classes = useStyles();
 
   // const [showReply, setShowReply] = useState(false);
@@ -137,6 +137,6 @@ function SingleComment({
       )} */}
     </>
   );
-}
+};
 
 export default SingleComment;

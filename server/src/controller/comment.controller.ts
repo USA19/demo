@@ -11,7 +11,7 @@ export const postAddComment = async (
   next: NextFunction
 ) => {
   try {
-    const post = await Post.findByPk(req.params.id, {
+    const post: Post | null = await Post.findByPk(req.params.id, {
       include: [
         {
           model: User,
@@ -84,7 +84,7 @@ export const postAddComment = async (
     if (!post) {
       return res.status(400).json({ message: "Post not found" });
     }
-    const comment = new Comment({
+    const comment: Comment = new Comment({
       CommentId: req.body.rootId || null,
       comment: req.body.comment,
       PostId: parseInt(req.params.id),
@@ -165,7 +165,7 @@ export const getComments = async (
   next: NextFunction
 ) => {
   try {
-    const commments = await Comment.findAll({
+    const commments: Comment[] = await Comment.findAll({
       where: {
         CommentId: null,
       },

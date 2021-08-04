@@ -1,6 +1,6 @@
 import server from "../BaseApi/server";
 import { signinResponse } from "../../Interfaces/User";
-import { User, signin } from "../../Interfaces/User";
+import { User, signin ,PostUser} from "../../Interfaces/User";
 import { AxiosResponse } from "axios";
 import { setToken } from "../../Utils/Token";
 
@@ -15,7 +15,7 @@ export const signupApi = async (data: User): Promise<boolean> => {
   }
 };
 
-export const loginApi = async (data: signin): Promise<User> => {
+export const loginApi = async (data: signin): Promise<PostUser> => {
   const response: AxiosResponse<signinResponse> = await server.post(
     "/login",
     data
@@ -24,7 +24,7 @@ export const loginApi = async (data: signin): Promise<User> => {
   return response.data.user;
 };
 
-export const loggedInUserApi = async (): Promise<User> => {
+export const loggedInUserApi = async (): Promise<PostUser> => {
   const response: AxiosResponse<signinResponse> = await server.get(
     "/loggedInUser"
   );

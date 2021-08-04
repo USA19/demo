@@ -63,18 +63,21 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-type Iprop = {
+interface PostCommentTextbarProps  {
   CommentId: number | null;
   postId: number;
 };
-export default function PostCommentTextbar({ postId, CommentId }: Iprop) {
+const PostCommentTextbar = ({
+  postId,
+  CommentId,
+}: PostCommentTextbarProps): JSX.Element => {
   const classes = useStyles();
   const { addCommentToPost } = useContext(PostContext);
   const [comment, setComment] = useState<string>("");
 
   const handleComment = () => {
     if (comment) {
-     //request for the comment
+      //request for the comment
       addCommentToPost(postId, CommentId, comment);
       setComment("");
     }
@@ -109,4 +112,6 @@ export default function PostCommentTextbar({ postId, CommentId }: Iprop) {
       </Grid>
     </div>
   );
-}
+};
+
+export default PostCommentTextbar;

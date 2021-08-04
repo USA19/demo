@@ -71,10 +71,10 @@ const useStyles = makeStyles({
   },
 });
 
-type props = {
+interface EditPostProps {
   open: boolean;
   setOpen: (value: boolean | ((prevVar: boolean) => boolean)) => void;
-};
+}
 export interface DialogTitleProps extends WithStyles<typeof styles> {
   id: string;
   children: React.ReactNode;
@@ -112,7 +112,7 @@ const DialogActions = withStyles((theme: Theme) => ({
   },
 }))(MuiDialogActions);
 
-export default function EditPost({ open, setOpen }: props) {
+const EditPost = ({ open, setOpen }: EditPostProps): JSX.Element => {
   const classes = useStyles();
   const context = useContext(AuthContext);
   const postContext = useContext(PostContext);
@@ -122,7 +122,7 @@ export default function EditPost({ open, setOpen }: props) {
 
   useEffect(() => {
     if (postContext.singlePost) {
-      if (postContext.singlePost.PostMedia.length !== 0) {
+      if (postContext.singlePost.PostMedia) {
         setUploadeMedia(postContext.singlePost.PostMedia);
       }
       setDescription(postContext.singlePost.description);
@@ -237,4 +237,6 @@ export default function EditPost({ open, setOpen }: props) {
       </Dialog>
     </div>
   );
-}
+};
+
+export default EditPost;

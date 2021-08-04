@@ -140,8 +140,8 @@ export default function Nav() {
                     <Avatar
                       className={classes.avatar}
                       src={
-                        user && user.profileImage
-                          ? baseUrl + "/" + user.profileImage
+                        user && user.profileImageUrl
+                          ? baseUrl + "/" + user.profileImageUrl
                           : "/ssa"
                       }
                     />

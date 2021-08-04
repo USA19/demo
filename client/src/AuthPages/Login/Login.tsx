@@ -21,7 +21,7 @@ import { useHistory } from "react-router-dom";
 import Container from "@material-ui/core/Container";
 import { loginApi } from "../../Context/AuthContext/Api";
 
-export default function SignIn() {
+const SignIn = (): JSX.Element => {
   const history = useHistory();
   const classes = useStyles();
   const [passwordType, setPasswordType] = useState("password");
@@ -141,4 +141,6 @@ export default function SignIn() {
       </div>
     </Container>
   );
-}
+};
+
+export default SignIn;

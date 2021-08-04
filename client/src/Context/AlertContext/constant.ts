@@ -15,3 +15,10 @@ export const message_change_password_failure =
   "you'r link has expired kindly try again";
 export const error_severity = "error";
 export const info_severity = "info";
+
+
+export type serverTypeError = "check your network connection and try again";
+export type loginError = "you have entered wrong email or password";
+export type signupError = "user with this email already exist try some other email!";
+
+export type ErrorType="error"

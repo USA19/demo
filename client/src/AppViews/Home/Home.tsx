@@ -8,10 +8,10 @@ import PostCard from "../Components/PostCard/PostCard";
 import PaginationComponent from "../../Components/Pagination";
 // import useStyles from "./styles";
 
-export default function Home() {
+const Home = ():JSX.Element => {
   const context = useContext(PostContext);
-  const [page, setPage] = useState("1");
-  const [limit] = useState("10");
+  const [page, setPage] = useState<string>("1");
+  const [limit] = useState<string>("10");
   useEffect(() => {
     context.fetchPosts(page, limit);
   }, [page]);
@@ -28,4 +28,6 @@ export default function Home() {
       <PaginationComponent setPage={setPage} />
     </Container>
   );
-}
+};
+
+export default Home;

@@ -21,11 +21,11 @@ const useStyles = makeStyles((theme) => ({
     right: 0,
   },
 }));
-type props = {
+interface PreviewMedediaProps {
   urls: FileList | null;
   setUrls: React.Dispatch<React.SetStateAction<FileList>>;
 };
-export default function PreviewMededia({ urls, setUrls }: props): JSX.Element {
+const PreviewMededia=({ urls, setUrls }: PreviewMedediaProps): JSX.Element=> {
   const classes = useStyles();
 
   const handleDeleteImage = (key) => {
@@ -58,3 +58,6 @@ export default function PreviewMededia({ urls, setUrls }: props): JSX.Element {
     )
   );
 }
+
+
+export default PreviewMededia

@@ -52,7 +52,7 @@ export const useStyles = makeStyles((theme) => ({
   },
   menuButton: {
     display: "none",
-    "@media (max-width: 1030px)": {
+    [theme.breakpoints.down("md")]: {
       display: "block",
     },
   },

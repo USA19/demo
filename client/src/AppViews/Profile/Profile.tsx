@@ -19,7 +19,7 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import { useFormik } from "formik";
-export default function SignUp() {
+export default function Profile() {
   const { setLoading, user } = useContext(AuthContext);
   const { showServerError } = useContext(AlertContext);
   const classes = useStyles();

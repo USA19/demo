@@ -7,20 +7,20 @@ import ShowSinglePot from "./ShowSinglePot";
 
 // import Box from "@material-ui/core/Box";
 
-type props = {
+interface PostCardProps {
   posts: Post[];
-};
-export default function PostCard({ posts }: props) {
+}
+export default function PostCard({ posts }: PostCardProps) {
   return (
-    posts &&
-    posts.length !== 0 && (
-      <>
-        {posts.map((post, i) => (
-          <>
-            <ShowSinglePot post={post} key={i} />
-          </>
-        ))}
-      </>
-    )
+    // posts &&
+    // posts.length !== 0 && (
+    <>
+      {posts.map((post, i) => (
+        <>
+          <ShowSinglePot post={post} key={i} />
+        </>
+      ))}
+    </>
   );
+  // );
 }

@@ -70,10 +70,10 @@ const useStyles = makeStyles({
   },
 });
 
-type props = {
+interface CreatePostProps {
   open: boolean;
   setOpen: (value: boolean | ((prevVar: boolean) => boolean)) => void;
-};
+}
 export interface DialogTitleProps extends WithStyles<typeof styles> {
   id: string;
   children: React.ReactNode;
@@ -111,7 +111,7 @@ const DialogActions = withStyles((theme: Theme) => ({
   },
 }))(MuiDialogActions);
 
-export default function CustomizedDialogs({ open, setOpen }: props) {
+const CreatePost = ({ open, setOpen }: CreatePostProps): JSX.Element => {
   const classes = useStyles();
   const context = useContext(AuthContext);
   const postContext = useContext(PostContext);
@@ -220,4 +220,6 @@ export default function CustomizedDialogs({ open, setOpen }: props) {
       </Dialog>
     </div>
   );
-}
+};
+
+export default CreatePost;

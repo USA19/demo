@@ -19,7 +19,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     }
     const email = req.body.email;
     const password = req.body.password;
-    const user = await UserModel.findOne({
+    const user: UserModel | null = await UserModel.findOne({
       where: { email: email },
     });
 
@@ -62,7 +62,7 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
     const email = userBody.email;
     const password = userBody.password;
 
-    const user = await UserModel.findOne({ where: { email: email } });
+    const user:UserModel|null= await UserModel.findOne({ where: { email: email } });
     if (user) {
       return res
         .status(400)
@@ -70,7 +70,7 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
     }
     const hashedPassword = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 
-    const newUser = new UserModel({
+    const newUser: UserModel = new UserModel({
       firstName: userBody.firstName,
       lastName: userBody.lastName,
       date_of_birth: new Date(userBody.date_of_birth),
@@ -88,13 +88,15 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+
+
 const getLoggedInUser = async (
   req: authBody,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const user = await UserModel.findByPk(req.userId);
+    const user: UserModel | null = await UserModel.findByPk(req.userId);
 
     if (!user) {
       return res.status(400).json({ message: "No User Found" });

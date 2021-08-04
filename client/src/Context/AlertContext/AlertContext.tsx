@@ -1,4 +1,5 @@
 import React, { FC, useState } from "react";
+import {ProviderInterface} from "../../Interfaces/ProviderInterface"
 import {
   message_login_error,
   message_signup_error,
@@ -9,9 +10,23 @@ import {
   message_server_error,
   // message_change_password_succes,
   // message_change_password_failure,
+  serverTypeError,
+  loginError,
+  signupError,
+  ErrorType,
 } from "./constant";
 
-export const AlertContext = React.createContext({
+interface AlertContextInterface {
+  open: boolean;
+  message: serverTypeError | loginError | signupError;
+  severity: ErrorType;
+  showServerError: () => void;
+  showLoginError: () => void;
+  showSignupError: () => void;
+  closeAlert: () => void;
+}
+
+export const AlertContext = React.createContext<AlertContextInterface>({
   open: false,
   message: message_server_error,
   severity: error_severity,
@@ -21,11 +36,13 @@ export const AlertContext = React.createContext({
   closeAlert: () => {},
 });
 
-export const AlertProvider: FC = (props): JSX.Element => {
+export const AlertProvider: FC = (props: ProviderInterface): JSX.Element => {
   const { children } = props;
   const [open, setOpen] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>(message_server_error);
-  const [severity, setSeverity] = useState<string>(error_severity);
+  const [message, setMessage] = useState<
+    serverTypeError | loginError | signupError
+  >(message_server_error);
+  const [severity, setSeverity] = useState<ErrorType>(error_severity);
 
   const showServerError = () => {
     setMessage(message_server_error);

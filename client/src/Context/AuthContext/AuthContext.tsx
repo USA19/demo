@@ -1,27 +1,40 @@
 import { FC, useState, createContext, SetStateAction } from "react";
+import { ProviderInterface } from "../../Interfaces/ProviderInterface";
+
 import { loggedInUserApi } from "./Api";
 import history from "../../history";
-import { User } from "../../Interfaces/User";
+import {  PostUser } from "../../Interfaces/User";
 import { removeToken } from "../../Utils/Token";
 
-export const AuthContext = createContext({
+interface AuthContextInterface {
+  isSignedIn: boolean;
+  user: PostUser;
+  loading: boolean;
+  setIsSignedIn: (data: boolean) => void;
+  setUser: (data: PostUser | null) => void;
+  handleSignout: () => void;
+  setLoading: (value: SetStateAction<boolean>) => void;
+  getLoggedInUser: () => void;
+}
+
+export const AuthContext = createContext<AuthContextInterface>({
   isSignedIn: false,
   user: null,
   loading: false,
   setIsSignedIn: (data: boolean) => {},
-  setUser: (data: User | null) => {},
+  setUser: (data: PostUser | null) => {},
   handleSignout: () => {},
   setLoading: (value: SetStateAction<boolean>) => {},
   getLoggedInUser: () => {},
 });
 
-export const AuthProvider: FC = (props): JSX.Element => {
+export const AuthProvider: FC = (props: ProviderInterface): JSX.Element => {
   const { children } = props;
   const [isSignedIn, isSignedInSetter] = useState<boolean>(false);
-  const [user, userSetter] = useState<User | null>(null);
+  const [user, userSetter] = useState<PostUser | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const setUser = (user: User) => {
+  const setUser = (user: PostUser) => {
     userSetter(user);
   };
 
@@ -38,7 +51,7 @@ export const AuthProvider: FC = (props): JSX.Element => {
   const getLoggedInUser = async () => {
     try {
       setLoading(true);
-      const user = await loggedInUserApi();
+      const user: PostUser = await loggedInUserApi();
       isSignedInSetter(true);
       userSetter(user);
       setLoading(false);

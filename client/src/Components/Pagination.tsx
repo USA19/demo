@@ -6,10 +6,10 @@ import Pagination from "@material-ui/lab/Pagination";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 
-type Iprop = {
+interface BasicPaginationProp {
   setPage: React.Dispatch<React.SetStateAction<string>>;
-};
-export default function BasicPagination({ setPage }: Iprop) {
+}
+const BasicPagination = ({ setPage }: BasicPaginationProp): JSX.Element => {
   // const classes = useStyles();
   const { totalPostPages } = useContext(PostContext);
   const handleChange = (event, value) => {
@@ -29,4 +29,6 @@ export default function BasicPagination({ setPage }: Iprop) {
       )}
     </Container>
   );
-}
+};
+
+export default BasicPagination;

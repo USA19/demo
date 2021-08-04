@@ -14,11 +14,11 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
   },
 }));
-type Iprop = {
+interface Iprop {
   Comments: commentInterface[];
   postId: number;
-};
-export default function AlignItemsList({ Comments, postId }: Iprop) {
+}
+const AlignItemsList = ({ Comments, postId }: Iprop): JSX.Element => {
   const classes = useStyles();
   // const [showReply, setShowReply] = useState(false);
   // const [rootId, setRootId] = useState<number | null>(null);
@@ -40,6 +40,6 @@ export default function AlignItemsList({ Comments, postId }: Iprop) {
         )}
     </List>
   );
-}
+};
 
-//lastChilId===id
+export default AlignItemsList;

@@ -16,8 +16,28 @@ import {
 } from "./Api";
 // import history from "../../history";
 import { Post, PostInterface } from "../../Interfaces/Post";
+import { ProviderInterface } from "../../Interfaces/ProviderInterface";
 
-export const PostContext = React.createContext({
+interface PostContextInterface {
+  posts: Post[];
+  singlePost: Post;
+  totalPostPages: number;
+  CreatePost: (data: FormData) => void;
+  deletePost: (id: number) => void;
+  deletePostImage: (id: number, imageId: number) => void;
+  editPost: (id: number, data: FormData) => void;
+  fetchPosts: (page: string, limit: string) => void;
+  fetchPost: (id: number) => void;
+  setSinglePost: (value: React.SetStateAction<Post>) => void;
+
+  addCommentToPost: (
+    postId: number,
+    rootId: number | number,
+    comment: string
+  ) => void;
+}
+
+export const PostContext = React.createContext<PostContextInterface>({
   posts: [],
   singlePost: null,
   totalPostPages: null,
@@ -36,7 +56,7 @@ export const PostContext = React.createContext({
   ) => {},
 });
 
-export const PostProvider: FC = (props): JSX.Element => {
+export const PostProvider: FC = (props: ProviderInterface): JSX.Element => {
   const { setLoading } = useContext(AuthContext);
   const { showServerError } = useContext(AlertContext);
 
@@ -47,7 +67,9 @@ export const PostProvider: FC = (props): JSX.Element => {
   const fetchPosts = async (page = "1", limit = "10") => {
     try {
       const result: AxiosResponse<PostInterface> = await getPosts(page, limit);
-      const {data: {posts, count}} = result
+      const {
+        data: { posts, count },
+      } = result;
       setPosts(posts);
       setTotalPostPages(count);
     } catch (e) {

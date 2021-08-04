@@ -25,20 +25,20 @@ const useStyles = makeStyles((theme) => ({
     right: 0,
   },
 }));
-type props = {
+interface PreviewPostProps {
   urls: FileList;
   setUrls: React.Dispatch<React.SetStateAction<FileList>>;
   setUploadeMedia: React.Dispatch<React.SetStateAction<uploadedMedia[]>>;
   uploadeMedia: uploadedMedia[];
   postId: number | null;
-};
-export default function PreviewMededia({
+}
+const PreviewPost = ({
   urls,
   setUrls,
   setUploadeMedia,
   uploadeMedia,
   postId,
-}: props): JSX.Element {
+}: PreviewPostProps): JSX.Element => {
   const { deletePostImage } = useContext(PostContext);
   const classes = useStyles();
   const handleUploadedDeleteImage = (index: number, imageId: number) => {
@@ -99,4 +99,5 @@ export default function PreviewMededia({
       )}
     </>
   );
-}
+};
+export default PreviewPost;

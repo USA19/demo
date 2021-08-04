@@ -15,7 +15,7 @@ export const updateUser = async (
     const email = userBody.email;
     const password = userBody.password;
 
-    let user = await UserModel.findOne({ where: { email: email } });
+    let user: UserModel|null = await UserModel.findOne({ where: { email: email } });
     if (!user) {
       return res.status(400).json({ message: "no user exist with this email" });
     }
