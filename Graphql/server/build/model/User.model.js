@@ -1,75 +1,80 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var sequelize_1 = require("sequelize");
-var Role_model_1 = __importDefault(require("./Role.model"));
-var database_1 = __importDefault(require("../config/database"));
-// const User: ModelDefined<UserInterface, UserCreationAttributes> =
-//   sequelize.define(
-//     "User",
-//     {
-//       id: {
-//         type: DataTypes.INTEGER,
-//         allowNull: false,
-//         primaryKey: true,
-//         autoIncrement: true,
-//       },
-// firstName: {
-//   type: DataTypes.STRING,
-// },
-// lastName: {
-//   type: DataTypes.STRING,
-// },
-// email: {
-//   type: DataTypes.STRING,
-//   allowNull: false,
-//   unique: "email",
-// },
-// date_of_birth: {
-//   type: DataTypes.DATE,
-//   allowNull: true,
-// },
-// bio: {
-//   type: DataTypes.STRING,
-// },
-// profileImageUrl: {
-//   type: DataTypes.STRING,
-// },
-// password: {
-//   type: DataTypes.STRING,
-//   allowNull: false,
-// },
-//     },
-//     {
-//       tableName: "users",
-//       //sequelize: sequelize, // passing the `sequelize` instance is required
-//     }
-//   );
-// export default User;
-var User = /** @class */ (function (_super) {
-    __extends(User, _super);
-    function User() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    return User;
-}(sequelize_1.Model));
+const sequelize_1 = require("sequelize");
+require("reflect-metadata");
+const type_graphql_1 = require("type-graphql");
+const Role_model_1 = __importDefault(require("./Role.model"));
+const database_1 = __importDefault(require("../config/database"));
+let User = class User extends sequelize_1.Model {
+};
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", Number)
+], User.prototype, "id", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", String)
+], User.prototype, "name", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", String)
+], User.prototype, "firstName", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", String)
+], User.prototype, "lastName", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", String)
+], User.prototype, "email", void 0);
+__decorate([
+    type_graphql_1.Field() // timestamps!
+    ,
+    __metadata("design:type", Date)
+], User.prototype, "date_of_birth", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "bio", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "profileImageUrl", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", String)
+], User.prototype, "password", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", Number)
+], User.prototype, "RoleId", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", Date)
+], User.prototype, "createdAt", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", Date)
+], User.prototype, "updatedAt", void 0);
+__decorate([
+    type_graphql_1.Field((type) => Role_model_1.default, { nullable: true }),
+    __metadata("design:type", Role_model_1.default)
+], User.prototype, "role", void 0);
+User = __decorate([
+    type_graphql_1.ObjectType()
+], User);
 User.init({
     id: {
         type: sequelize_1.DataTypes.INTEGER,
@@ -104,34 +109,8 @@ User.init({
     },
 }, {
     tableName: "users",
-    sequelize: database_1.default,
+    sequelize: database_1.default, // passing the `sequelize` instance is required
 });
-// import * as Sequelize from "sequelize";
-// import sequelize from "../config/database";
-// export interface UserAddModel {
-//   email: string;
-//   password: string;
-// }
-// export interface UserModel extends Sequelize.Model<UserModel, UserAddModel> {
-//   id: number;
-//   email: string;
-//   password: string;
-//   createdAt: string;
-//   updatedAt: string;
-// }
-// export interface UserViewModel {
-//   id: number;
-//   email: string;
-// }
-// export const User = sequelize.define<UserModel, UserAddModel>("users", {
-//   // id: {
-//   //   type: Sequelize.INTEGER,
-//   //   autoIncrement: true,
-//   //   primaryKey: true,
-//   // },
-//   email: Sequelize.STRING,
-//   password: Sequelize.STRING,
-// });
 Role_model_1.default.hasOne(User);
 User.belongsTo(Role_model_1.default);
 exports.default = User;

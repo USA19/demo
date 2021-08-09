@@ -1,76 +1,45 @@
 import { Association, DataTypes, Model } from "sequelize";
+import "reflect-metadata";
+import { ObjectType, Field } from "type-graphql";
 
 import { UserInterface, UserCreationAttributes } from "../interfaces/user";
 import Role from "./Role.model";
 import sequelize from "../config/database";
-// const User: ModelDefined<UserInterface, UserCreationAttributes> =
-//   sequelize.define(
-//     "User",
-//     {
-//       id: {
-//         type: DataTypes.INTEGER,
-//         allowNull: false,
-//         primaryKey: true,
-//         autoIncrement: true,
-//       },
-// firstName: {
-//   type: DataTypes.STRING,
-// },
 
-// lastName: {
-//   type: DataTypes.STRING,
-// },
-
-// email: {
-//   type: DataTypes.STRING,
-//   allowNull: false,
-//   unique: "email",
-// },
-// date_of_birth: {
-//   type: DataTypes.DATE,
-//   allowNull: true,
-// },
-
-// bio: {
-//   type: DataTypes.STRING,
-// },
-// profileImageUrl: {
-//   type: DataTypes.STRING,
-// },
-
-// password: {
-//   type: DataTypes.STRING,
-//   allowNull: false,
-// },
-//     },
-//     {
-//       tableName: "users",
-//       //sequelize: sequelize, // passing the `sequelize` instance is required
-//     }
-//   );
-
-// export default User;
-
+@ObjectType()
 class User
   extends Model<UserInterface, UserCreationAttributes>
   implements UserInterface
 {
+  @Field()
   public id!: number; // Note that the `null assertion` `!` is required in strict mode.
+  @Field()
   public name!: string;
+  @Field()
   public firstName!: string;
+  @Field()
   public lastName!: string;
-
+  @Field()
   public email!: string;
 
-  // timestamps!
+  @Field() // timestamps!
   date_of_birth!: Date;
+
+  @Field({ nullable: true })
   bio!: string;
+  @Field({ nullable: true })
   profileImageUrl!: string;
+  @Field()
   password!: string;
+  @Field({ nullable: true })
   RoleId!: number;
-  public readonly role?: Role;
+
+  @Field()
   public readonly createdAt!: Date;
+  @Field()
   public readonly updatedAt!: Date;
+  @Field((type) => Role, { nullable: true })
+  public readonly role?: Role;
 
   public static associations: {
     RoleId: Association<User, Role>;
@@ -120,37 +89,6 @@ User.init(
     sequelize, // passing the `sequelize` instance is required
   }
 );
-
-// import * as Sequelize from "sequelize";
-// import sequelize from "../config/database";
-
-// export interface UserAddModel {
-//   email: string;
-//   password: string;
-// }
-
-// export interface UserModel extends Sequelize.Model<UserModel, UserAddModel> {
-//   id: number;
-//   email: string;
-//   password: string;
-//   createdAt: string;
-//   updatedAt: string;
-// }
-
-// export interface UserViewModel {
-//   id: number;
-//   email: string;
-// }
-
-// export const User = sequelize.define<UserModel, UserAddModel>("users", {
-//   // id: {
-//   //   type: Sequelize.INTEGER,
-//   //   autoIncrement: true,
-//   //   primaryKey: true,
-//   // },
-//   email: Sequelize.STRING,
-//   password: Sequelize.STRING,
-// });
 
 Role.hasOne(User);
 User.belongsTo(Role);

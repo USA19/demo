@@ -3,33 +3,38 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isAuthenticated = void 0;
-var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-var config_1 = __importDefault(require("../config/config"));
-var isAuthenticated = function (req, res, next) {
-    try {
-        var header = req.headers["authorization"];
-        if (typeof header === "undefined") {
-            return res
-                .status(401)
-                .json({ message: "authentication credentials are not provided" });
-        }
-        var token = header.split(" ")[1];
-        if (!token) {
-            return res
-                .status(401)
-                .json({ message: "authentication credetils were not provided" });
-        }
-        var decoded = jsonwebtoken_1.default.verify(token, config_1.default.JWTKEY);
-        req.userId = decoded.userId;
-        next();
-    }
-    catch (e) {
-        console.log("problem is here in authenticating a user" + e);
-        return res.status(500).json({ message: "Server side Error isAuth" });
-    }
-};
-exports.isAuthenticated = isAuthenticated;
+exports.isAuth = void 0;
+// import { Ctx } from "type-graphql";
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const config_1 = __importDefault(require("../config/config"));
+// interface authBody extends Request {
+//   userId?: number | undefined;
+// }
+// export const isAuthenticated: RequestHandler = (
+//   req: authBody,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   try {
+//     const header = req.headers["authorization"];
+//     if (typeof header === "undefined") {
+//       return res
+//         .status(401)
+//         .json({ message: "authentication credentials are not provided" });
+//     }
+//     const token = header.split(" ")[1];
+//     if (!token) {
+//       return res
+//         .status(401)
+//         .json({ message: "authentication credetils were not provided" });
+//     }
+//     const decoded = jwt.verify(token, config.JWTKEY);
+//     req.userId = (decoded as any).userId;
+//   } catch (e) {
+//     console.log("problem is here in authenticating a user" + e);
+//     return res.status(500).json({ message: "Server side Error isAuth" });
+//   }
+// };
 // export const isAdmin = async (
 //   req: authBody,
 //   res: Response,
@@ -48,3 +53,18 @@ exports.isAuthenticated = isAuthenticated;
 //     return res.status(500).json({ message: "Server side Error isAdmin" });
 //   }
 // };
+const isAuth = ({ context }, next) => {
+    const { req } = context;
+    const header = req.headers["authorization"];
+    if (typeof header === "undefined") {
+        throw new Error("not authenticated");
+    }
+    const token = header;
+    if (!token) {
+        throw new Error("no token s provided");
+    }
+    const decoded = jsonwebtoken_1.default.verify(token, config_1.default.JWTKEY);
+    req.userId = decoded.userId;
+    return next();
+};
+exports.isAuth = isAuth;

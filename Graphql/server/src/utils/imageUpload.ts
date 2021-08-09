@@ -1,5 +1,11 @@
+import { Request, Response, Router } from "express";
 import multer, { FileFilterCallback } from "multer";
-import { Request } from "express";
+import Post from "../model/Post.model";
+
+import PostMedia from "../model/PostMedia.model";
+import { deleteFile } from "./imageDelete";
+
+const router = Router();
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "./images");
@@ -24,12 +30,71 @@ const fileFilter = (
   }
 };
 
-export const postImageHandler = multer({
+const postImageHandler = multer({
   storage: fileStorage,
   fileFilter: fileFilter,
 }).any();
 
-export const userImageHandler = multer({
-  storage: fileStorage,
-  fileFilter: fileFilter,
-}).single("image");
+// const userImageHandler = multer({
+//   storage: fileStorage,
+//   fileFilter: fileFilter,
+// }).single("image");
+
+router.post(
+  "/uploadPostImage/:postId",
+  postImageHandler,
+  async (req: Request, res: Response) => {
+    try {
+      if (req.files) {
+        let postMedia = [];
+
+        for (let file of req.files as Express.Multer.File[]) {
+          postMedia.push({
+            PostId: parseInt(req.params.postId),
+            mediaUrl: file.path,
+          });
+        }
+        // console.log("🚀 ~ file: post.controller.js ~ line 40 ~");
+        const media: PostMedia[] = await PostMedia.bulkCreate(postMedia);
+        res.status(200).json(media);
+      }
+    } catch (e) {
+      console.log(e);
+      res
+        .status(500)
+        .json({ message: "something went wrong in uplaoding image" });
+    }
+  }
+);
+
+router.delete(
+  "/deletePostImage",
+
+  async (req: Request, res: Response) => {
+    try {
+      const post: Post | null = await Post.findByPk(req.params.id, {
+        include: [{ model: PostMedia }],
+      });
+      if (!post) {
+        return res.status(400).json({ message: "Post does not found" });
+      }
+      await PostMedia.destroy({
+        where: { id: req.params.imageId },
+      });
+
+      for (let postMedia of post.PostMedia) {
+        if (postMedia.id === parseInt(req.params.imageId)) {
+          deleteFile(postMedia.mediaUrl);
+        }
+      }
+      res.status(200).json({ message: "image deleted successfully" });
+    } catch (e) {
+      console.log(e);
+      res
+        .status(500)
+        .json({ message: "something went wrong in uplaoding image" });
+    }
+  }
+);
+
+export default router;

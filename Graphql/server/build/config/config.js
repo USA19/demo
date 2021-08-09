@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var config = {
+const config = {
     NODE_ENV: "development",
     HOST: "localhost",
     PORT: 5000,

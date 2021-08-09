@@ -1,15 +1,20 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/database";
 import { roleInterface, RoleCreationAttributes } from "../interfaces/role";
-
+import "reflect-metadata";
+import { ObjectType, Field } from "type-graphql";
+@ObjectType()
 class Role
   extends Model<roleInterface, RoleCreationAttributes>
   implements roleInterface
 {
+  @Field()
   public id!: number; // Note that the `null assertion` `!` is required in strict mode.
+  @Field()
   public name!: string;
-
+  @Field()
   public readonly createdAt!: Date;
+  @Field()
   public readonly updatedAt!: Date;
 }
 
@@ -32,5 +37,3 @@ Role.init(
 );
 
 export default Role;
-
-

@@ -1,39 +1,40 @@
 import User from "../model/User.model";
 import { Request, RequestHandler, NextFunction, Response } from "express";
-
+import { MiddlewareFn } from "type-graphql";
+// import { Ctx } from "type-graphql";
 import jwt from "jsonwebtoken";
 import config from "../config/config";
+import { MyContext } from "../interfaces/context";
 
-interface authBody extends Request {
-  userId?: number | undefined;
-}
-export const isAuthenticated: RequestHandler = (
-  req: authBody,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const header = req.headers["authorization"];
-    if (typeof header === "undefined") {
-      return res
-        .status(401)
-        .json({ message: "authentication credentials are not provided" });
-    }
-    const token = header.split(" ")[1];
-    if (!token) {
-      return res
-        .status(401)
-        .json({ message: "authentication credetils were not provided" });
-    }
-    const decoded = jwt.verify(token, config.JWTKEY);
+// interface authBody extends Request {
+//   userId?: number | undefined;
+// }
+// export const isAuthenticated: RequestHandler = (
+//   req: authBody,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   try {
+//     const header = req.headers["authorization"];
+//     if (typeof header === "undefined") {
+//       return res
+//         .status(401)
+//         .json({ message: "authentication credentials are not provided" });
+//     }
+//     const token = header.split(" ")[1];
+//     if (!token) {
+//       return res
+//         .status(401)
+//         .json({ message: "authentication credetils were not provided" });
+//     }
+//     const decoded = jwt.verify(token, config.JWTKEY);
 
-    req.userId = (decoded as any).userId;
-    next();
-  } catch (e) {
-    console.log("problem is here in authenticating a user" + e);
-    return res.status(500).json({ message: "Server side Error isAuth" });
-  }
-};
+//     req.userId = (decoded as any).userId;
+//   } catch (e) {
+//     console.log("problem is here in authenticating a user" + e);
+//     return res.status(500).json({ message: "Server side Error isAuth" });
+//   }
+// };
 
 // export const isAdmin = async (
 //   req: authBody,
@@ -54,3 +55,23 @@ export const isAuthenticated: RequestHandler = (
 //     return res.status(500).json({ message: "Server side Error isAdmin" });
 //   }
 // };
+
+export const isAuth: MiddlewareFn<MyContext> = ({ context }, next) => {
+  const { req } = context;
+
+  const header = req.headers["authorization"];
+  if (typeof header === "undefined") {
+    throw new Error("not authenticated");
+  }
+  const token = header;
+
+  if (!token) {
+    throw new Error("no token s provided");
+  }
+
+  const decoded = jwt.verify(token, config.JWTKEY);
+
+  req.userId = (decoded as any).userId;
+
+  return next();
+};

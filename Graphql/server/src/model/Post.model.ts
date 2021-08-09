@@ -1,23 +1,33 @@
 import { Association, DataTypes, Model } from "sequelize";
+import { ObjectType, Field } from "type-graphql";
+
 import sequelize from "../config/database";
 import User from "./User.model";
 import PostMedia from "./PostMedia.model";
 import Comments from "./Comment.model";
 import { postInterface, PostCreationAttributes } from "../interfaces/post";
-
+@ObjectType()
 class Post
   extends Model<postInterface, PostCreationAttributes>
   implements postInterface
 {
+  @Field()
   public id!: number; // Note that the `null assertion` `!` is required in strict mode.
+  @Field({ nullable: true })
   public description!: string;
+  @Field()
   public UserId!: number;
-  public readonly user?: User;
-  public readonly comments?: Comments[];
+  @Field((type) => User, { nullable: true })
+  public readonly User?: User;
+  @Field((type) => [Comments], { nullable: true })
+  public readonly Comments?: Comments[];
 
+  @Field()
   public readonly createdAt!: Date;
+  @Field()
   public readonly updatedAt!: Date;
 
+  @Field((type) => [PostMedia], { nullable: true })
   public readonly PostMedia!: PostMedia[];
   public static associations: {
     postMedia: Association<Post, PostMedia>;
@@ -43,7 +53,12 @@ Post.init(
   }
 );
 
-export default Post;
-
 User.hasMany(Post);
 Post.belongsTo(User);
+
+Post.hasMany(PostMedia);
+PostMedia.belongsTo(Post);
+Post.hasMany(Comments);
+Comments.belongsTo(Post);
+
+export default Post;

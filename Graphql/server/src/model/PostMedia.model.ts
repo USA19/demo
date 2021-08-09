@@ -1,19 +1,27 @@
 import { DataTypes, Model } from "sequelize";
+import { ObjectType, Field } from "type-graphql";
+
 import sequelize from "../config/database";
-import Post from "./Post.model";
+// import Post from "./Post.model";
 import {
   postMediaInterface,
   PostMediaCreationAttributes,
 } from "../interfaces/postMedia";
 
+@ObjectType()
 class PostMedia
   extends Model<postMediaInterface, PostMediaCreationAttributes>
   implements postMediaInterface
 {
+  @Field()
   public id!: number; // Note that the `null assertion` `!` is required in strict mode.
+  @Field({ nullable: true })
   public mediaUrl!: string;
+  @Field({ nullable: true })
   PostId!: number;
+  @Field()
   public readonly createdAt!: Date;
+  @Field()
   public readonly updatedAt!: Date;
 }
 
@@ -34,8 +42,8 @@ PostMedia.init(
     sequelize, // passing the `sequelize` instance is required
   }
 );
+// console.log(Post, "<<<<<<<<<POST MEDIA");
+// Post.hasMany(PostMedia);
+// PostMedia.belongsTo(Post);
 
 export default PostMedia;
-
-Post.hasMany(PostMedia);
-PostMedia.belongsTo(Post);

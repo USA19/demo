@@ -1,33 +1,45 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var sequelize_1 = require("sequelize");
-var database_1 = __importDefault(require("../config/database"));
-var Post_model_1 = __importDefault(require("./Post.model"));
-var PostMedia = /** @class */ (function (_super) {
-    __extends(PostMedia, _super);
-    function PostMedia() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    return PostMedia;
-}(sequelize_1.Model));
+const sequelize_1 = require("sequelize");
+const type_graphql_1 = require("type-graphql");
+const database_1 = __importDefault(require("../config/database"));
+let PostMedia = class PostMedia extends sequelize_1.Model {
+};
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", Number)
+], PostMedia.prototype, "id", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", String)
+], PostMedia.prototype, "mediaUrl", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", Number)
+], PostMedia.prototype, "PostId", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", Date)
+], PostMedia.prototype, "createdAt", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", Date)
+], PostMedia.prototype, "updatedAt", void 0);
+PostMedia = __decorate([
+    type_graphql_1.ObjectType()
+], PostMedia);
 PostMedia.init({
     id: {
         type: sequelize_1.DataTypes.INTEGER,
@@ -40,8 +52,9 @@ PostMedia.init({
     },
 }, {
     tableName: "postMedia",
-    sequelize: database_1.default,
+    sequelize: database_1.default, // passing the `sequelize` instance is required
 });
+// console.log(Post, "<<<<<<<<<POST MEDIA");
+// Post.hasMany(PostMedia);
+// PostMedia.belongsTo(Post);
 exports.default = PostMedia;
-Post_model_1.default.hasMany(PostMedia);
-PostMedia.belongsTo(Post_model_1.default);
