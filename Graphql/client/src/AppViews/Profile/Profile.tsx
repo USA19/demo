@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../../Context/AuthContext/AuthContext";
+// import { User } from "../../Interfaces/User";
 import { useStyles } from "./styles";
 import { baseUrl } from "../../Context/BaseApi/server";
 import { initialValues, validationSchema } from "./formInitials";
@@ -23,7 +24,7 @@ export default function Profile() {
   const classes = useStyles();
   const [passwordType, setPasswordType] = useState("password");
   const [rePasswordType, setRePasswordType] = useState("password");
-  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [profileImage, setProfileImage] = useState<FileList | null>();
 
   const handleClickShowPassword = () => {
     if (passwordType === "password") {
@@ -41,19 +42,26 @@ export default function Profile() {
     }
   };
   const handleProfileImageUplaod = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setProfileImage(e.target.files[0]);
+    if (e.target.files) setProfileImage(e.target.files);
   };
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
     useFormik({
       initialValues: initialValues(user),
       validationSchema,
       enableReinitialize: true,
-      onSubmit: (values, { resetForm }) => {
+      onSubmit: (values: any, { resetForm }) => {
         try {
+          // interface IObjectKeys {
+          //   [key: string]: any;
+          // }
           const data = new FormData();
           Object.keys(values).map((key) => data.append(key, values[key]));
+
+          // for (let value: IObjectKeys in values) {
+          //   data.append(value, values[value]);
+          // }
           if (profileImage) {
-            data.append("image", profileImage);
+            data.append("image", profileImage[0]);
           }
           updateUser(data);
         } catch (e) {
@@ -80,7 +88,9 @@ export default function Profile() {
             src={
               user && user.profileImageUrl && !profileImage
                 ? baseUrl + user.profileImageUrl
-                : profileImage && URL.createObjectURL(profileImage)
+                : profileImage
+                ? URL.createObjectURL(profileImage[0])
+                : "/dd"
             }
           />
           {/* profileImage && user ? URL.createObjectURL(profileImage) : baseUrl +

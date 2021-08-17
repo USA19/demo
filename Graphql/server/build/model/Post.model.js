@@ -25,7 +25,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Post.prototype, "id", void 0);
 __decorate([
-    type_graphql_1.Field({ nullable: true }),
+    type_graphql_1.Field(),
     __metadata("design:type", String)
 ], Post.prototype, "description", void 0);
 __decorate([
@@ -37,7 +37,7 @@ __decorate([
     __metadata("design:type", User_model_1.default)
 ], Post.prototype, "User", void 0);
 __decorate([
-    type_graphql_1.Field((type) => [Comment_model_1.default], { nullable: true }),
+    type_graphql_1.Field((type) => [Comment_model_1.default], { nullable: "itemsAndList" }),
     __metadata("design:type", Array)
 ], Post.prototype, "Comments", void 0);
 __decorate([
@@ -45,11 +45,7 @@ __decorate([
     __metadata("design:type", Date)
 ], Post.prototype, "createdAt", void 0);
 __decorate([
-    type_graphql_1.Field(),
-    __metadata("design:type", Date)
-], Post.prototype, "updatedAt", void 0);
-__decorate([
-    type_graphql_1.Field((type) => [PostMedia_model_1.default], { nullable: true }),
+    type_graphql_1.Field((type) => [PostMedia_model_1.default], { nullable: "itemsAndList" }),
     __metadata("design:type", Array)
 ], Post.prototype, "PostMedia", void 0);
 Post = __decorate([

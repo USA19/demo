@@ -1,5 +1,5 @@
 import User from "../model/User.model";
-import { Request, RequestHandler, NextFunction, Response } from "express";
+
 import { MiddlewareFn } from "type-graphql";
 // import { Ctx } from "type-graphql";
 import jwt from "jsonwebtoken";
@@ -63,15 +63,18 @@ export const isAuth: MiddlewareFn<MyContext> = ({ context }, next) => {
   if (typeof header === "undefined") {
     throw new Error("not authenticated");
   }
-  const token = header;
-
+  const token = header.split(" ")[1];
   if (!token) {
-    throw new Error("no token s provided");
+    throw new Error("no tokens provided");
   }
 
   const decoded = jwt.verify(token, config.JWTKEY);
-
-  req.userId = (decoded as any).userId;
-
-  return next();
+  if (decoded) {
+    req.userId = (decoded as any).userId;
+    console.log("im in next here");
+    return next();
+  } else {
+    console.log("im in next error");
+    throw new Error("token is not provided");
+  }
 };

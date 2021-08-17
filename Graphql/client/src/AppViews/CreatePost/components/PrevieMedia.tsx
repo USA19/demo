@@ -23,41 +23,46 @@ const useStyles = makeStyles((theme) => ({
 }));
 interface PreviewMedediaProps {
   urls: FileList | null;
-  setUrls: React.Dispatch<React.SetStateAction<FileList>>;
-};
-const PreviewMededia=({ urls, setUrls }: PreviewMedediaProps): JSX.Element=> {
+  setUrls: React.Dispatch<React.SetStateAction<FileList | null>>;
+}
+const PreviewMededia = ({
+  urls,
+  setUrls,
+}: PreviewMedediaProps): JSX.Element => {
   const classes = useStyles();
 
-  const handleDeleteImage = (key) => {
-    const list = { ...urls };
-    delete list[key];
-    // list.splice(index, 1);
-    setUrls(list);
+  const handleDeleteImage = (key: string) => {
+    if (urls && urls.length > 1) {
+      const list = { ...urls };
+      // console.log(list);
+      delete list[parseInt(key)];
+      setUrls(list);
+      // console.log("deleted ke===============>", list);
+    } else {
+      setUrls(null);
+    }
+    // // list.splice(index, 1);
   };
   return (
-    urls && (
-      <Box>
-        {Object.keys(urls).length !== 0 &&
-          Object.keys(urls).map((key, i) => {
-            return (
-              <Card className={classes.root} key={i}>
-                <CardMedia
-                  className={classes.media}
-                  image={URL.createObjectURL(urls[key])}
-                />
-                <IconButton
-                  onClick={() => handleDeleteImage(key)}
-                  className={classes.close}
-                >
-                  <HighlightOffIcon />
-                </IconButton>
-              </Card>
-            );
-          })}
-      </Box>
-    )
+    <Box>
+      {urls &&
+        Object.keys(urls).length !== 0 &&
+        Object.keys(urls).map((key, i) => (
+          <Card className={classes.root} key={i}>
+            <CardMedia
+              className={classes.media}
+              image={URL.createObjectURL(urls[parseInt(key)])}
+            />
+            <IconButton
+              onClick={() => handleDeleteImage(key)}
+              className={classes.close}
+            >
+              <HighlightOffIcon />
+            </IconButton>
+          </Card>
+        ))}
+    </Box>
   );
-}
+};
 
-
-export default PreviewMededia
+export default PreviewMededia;

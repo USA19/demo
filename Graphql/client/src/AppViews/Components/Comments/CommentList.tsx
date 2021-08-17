@@ -1,7 +1,9 @@
 import React from "react";
 //, { useState }
 import { makeStyles } from "@material-ui/core/styles";
-import { commentInterface } from "../../../Interfaces/Post";
+// import { commentInterface } from "../../../Interfaces/Post";
+import { Comment, Maybe } from "../../../generated/graphql";
+
 // import PostCommentTextbar from "./CommentTextbar";
 import List from "@material-ui/core/List";
 // import Box from "@material-ui/core/Box";
@@ -15,10 +17,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 interface Iprop {
-  Comments: commentInterface[] | undefined;
+  Comments: Maybe<Array<Maybe<Comment>>>;
   postId: number;
 }
-const AlignItemsList = ({ Comments, postId }: Iprop): JSX.Element => {
+const Comments = ({ Comments, postId }: Iprop): JSX.Element => {
   const classes = useStyles();
   // const [showReply, setShowReply] = useState(false);
   // const [rootId, setRootId] = useState<number | null>(null);
@@ -28,12 +30,13 @@ const AlignItemsList = ({ Comments, postId }: Iprop): JSX.Element => {
         Comments.length !== 0 &&
         Comments.map(
           (comment, i) =>
+            comment &&
             !comment.CommentId && (
               <>
                 <ParentComment
                   comment={comment}
                   postId={postId}
-                  childs={comment.Comments}
+                  childs={comment.Comments?comment.Comments:[]}
                 />
               </>
             )
@@ -42,4 +45,4 @@ const AlignItemsList = ({ Comments, postId }: Iprop): JSX.Element => {
   );
 };
 
-export default AlignItemsList;
+export default Comments;

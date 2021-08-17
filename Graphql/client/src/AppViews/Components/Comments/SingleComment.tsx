@@ -1,4 +1,6 @@
-import { commentInterface } from "../../../Interfaces/Post";
+// import { commentInterface } from "../../../Interfaces/Post";
+import { Comment, Maybe } from "../../../generated/graphql";
+
 import React from "react";
 // ,{useState}
 // import PostCommentTextbar from "./CommentTextbar";
@@ -34,13 +36,13 @@ const useStyles = makeStyles((theme) => ({
 
 type SingleCommentProp = {
   postId: number | undefined;
-  comment: commentInterface;
-  childComments: commentInterface[];
+  comment: Maybe<Comment>;
+  childComments: Maybe<Maybe<Comment>[]>;
   setShowReply: (value: React.SetStateAction<boolean>) => void;
   setRootId: (value: React.SetStateAction<number | null>) => void;
   rootId: number | null;
   showReply: boolean;
-  childs: commentInterface[];
+  childs: Maybe<Maybe<Comment>[]>;
 };
 const SingleComment = ({
   postId,
@@ -57,13 +59,15 @@ const SingleComment = ({
   // const [showReply, setShowReply] = useState(false);
   // const [rootId, setRootId] = useState<number | null>(null);
   const handleShowReply = (id: number | null) => {
+    
     // console.log(id);
-    if (
-      childs.length !== 0 &&
-      childs[0].Comments.length !== 0 &&
-      childs[0].Comments.length > 0
-    ) {
-      if (id === childs[0].Comments[childs[0].Comments.length - 1].id) {
+    if (childs && childs.length !== 0 && childs[0] && childs[0].Comments) {
+      //id === childs[0].Comments[childs[0].Comments.length - 1].id)
+      if (
+        childs != null &&
+        childs[0].Comments.length > 0 &&
+        id === childs[0]?.Comments[childs[0].Comments.length - 1]?.id
+      ) {
         setRootId(childs[0].id);
       } else {
         setRootId(id);
@@ -99,7 +103,7 @@ const SingleComment = ({
                 className={classes.inline}
                 color="textPrimary"
               >
-                {comment.comment}
+                {comment && comment.comment}
               </Typography>
             </React.Fragment>
           }
@@ -108,7 +112,7 @@ const SingleComment = ({
 
       <Typography
         component="span"
-        onClick={() => handleShowReply(comment.id)}
+        onClick={() => handleShowReply(comment && comment.id)}
         className={classes.replyText}
       >
         Reply
@@ -120,17 +124,19 @@ const SingleComment = ({
         childComments.length !== 0 &&
         childComments.map((c, i) => (
           <Box ml={i + 3}>
-            <SingleComment
-              key={c.id}
-              comment={c}
-              childComments={c.Comments}
-              postId={c.PostId}
-              showReply={showReply}
-              setShowReply={setShowReply}
-              rootId={rootId}
-              setRootId={setRootId}
-              childs={childs}
-            />
+            {c && (
+              <SingleComment
+                key={c.id}
+                comment={c}
+                childComments={c.Comments ? c.Comments : []}
+                postId={c.PostId}
+                showReply={showReply}
+                setShowReply={setShowReply}
+                rootId={rootId}
+                setRootId={setRootId}
+                childs={childs}
+              />
+            )}
           </Box>
         ))}
       {/* </Comment> */}

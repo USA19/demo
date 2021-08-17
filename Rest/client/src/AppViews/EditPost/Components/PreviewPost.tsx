@@ -26,8 +26,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 interface PreviewPostProps {
-  urls: FileList;
-  setUrls: React.Dispatch<React.SetStateAction<FileList>>;
+  urls: FileList | null;
+  setUrls: React.Dispatch<React.SetStateAction<FileList | null>>;
   setUploadeMedia: React.Dispatch<React.SetStateAction<uploadedMedia[]>>;
   uploadeMedia: uploadedMedia[];
   postId: number | null;
@@ -42,18 +42,24 @@ const PreviewPost = ({
   const { deletePostImage } = useContext(PostContext);
   const classes = useStyles();
   const handleUploadedDeleteImage = (index: number, imageId: number) => {
-    console.log(postId);
-    deletePostImage(postId, imageId);
-    const list = [...uploadeMedia];
-    list.splice(index, 1);
-    setUploadeMedia(list);
+    if (postId) {
+      deletePostImage(postId, imageId);
+      const list = [...uploadeMedia];
+      list.splice(index, 1);
+      setUploadeMedia(list);
+    }
   };
 
-  const handleDeleteImage = (key) => {
-    const list = { ...urls };
-    delete list[key];
-
-    setUrls(list);
+  const handleDeleteImage = (key: string) => {
+    if (urls && urls.length > 1) {
+      const list = { ...urls };
+      // console.log(list);
+      delete list[parseInt(key)];
+      setUrls(list);
+      // console.log("deleted ke===============>", list);
+    } else {
+      setUrls(null);
+    }
   };
   return (
     <>
@@ -84,10 +90,10 @@ const PreviewPost = ({
               <Card className={classes.root} key={i}>
                 <CardMedia
                   className={classes.media}
-                  image={URL.createObjectURL(urls[key])}
+                  image={URL.createObjectURL(urls[parseInt(key)])}
                 />
                 <IconButton
-                  onClick={() => handleDeleteImage(i)}
+                  onClick={() => handleDeleteImage(key)}
                   className={classes.close}
                 >
                   <HighlightOffIcon />

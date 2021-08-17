@@ -7,12 +7,13 @@ import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 
 interface BasicPaginationProp {
-  setPage: React.Dispatch<React.SetStateAction<string>>;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
 }
 const BasicPagination = ({ setPage }: BasicPaginationProp): JSX.Element => {
   // const classes = useStyles();
   const { totalPostPages } = useContext(PostContext);
-  const handleChange = (event, value) => {
+
+  const handleChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
   return (

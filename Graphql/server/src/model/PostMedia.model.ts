@@ -15,13 +15,13 @@ class PostMedia
 {
   @Field()
   public id!: number; // Note that the `null assertion` `!` is required in strict mode.
-  @Field({ nullable: true })
+  @Field()
   public mediaUrl!: string;
-  @Field({ nullable: true })
+  @Field()
   PostId!: number;
-  @Field()
+
   public readonly createdAt!: Date;
-  @Field()
+
   public readonly updatedAt!: Date;
 }
 

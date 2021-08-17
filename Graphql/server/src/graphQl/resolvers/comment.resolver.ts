@@ -35,6 +35,8 @@ export class createCommentBody {
   comment!: string;
   @Field(() => Number, { nullable: true })
   rootId?: number | null;
+  @Field(() => Number)
+  postId!: number;
 }
 
 @Resolver()
@@ -88,14 +90,11 @@ export class CommentResolver {
   @Mutation(() => CommentResponse)
   @UseMiddleware(isAuth)
   async createComment(
-    @Arg("postId") postId: number,
-    @Arg("id")
-    id: number,
     @Arg("createCommentBody") body: createCommentBody,
     @Ctx() { req }: MyContext
   ): Promise<CommentResponse> {
     try {
-      const post: Post | null = await Post.findByPk(id, {
+      const post: Post | null = await Post.findByPk(body.postId, {
         include: [
           {
             model: User,
@@ -172,7 +171,7 @@ export class CommentResolver {
       const comment: Comment = new Comment({
         CommentId: body.rootId || null,
         comment: body.comment,
-        PostId: postId,
+        PostId: body.postId,
         UserId: req.userId,
       });
 

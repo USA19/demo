@@ -59,12 +59,19 @@ const isAuth = ({ context }, next) => {
     if (typeof header === "undefined") {
         throw new Error("not authenticated");
     }
-    const token = header;
+    const token = header.split(" ")[1];
     if (!token) {
-        throw new Error("no token s provided");
+        throw new Error("no tokens provided");
     }
     const decoded = jsonwebtoken_1.default.verify(token, config_1.default.JWTKEY);
-    req.userId = decoded.userId;
-    return next();
+    if (decoded) {
+        req.userId = decoded.userId;
+        console.log("im in next here");
+        return next();
+    }
+    else {
+        console.log("im in next error");
+        throw new Error("token is not provided");
+    }
 };
 exports.isAuth = isAuth;

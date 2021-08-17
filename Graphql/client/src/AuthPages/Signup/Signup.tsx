@@ -1,9 +1,11 @@
-import React, { useState, useContext } from "react";
+import { useState, useContext } from "react";
+
 import { AuthContext } from "../../Context/AuthContext/AuthContext";
 import { AlertContext } from "../../Context/AlertContext/AlertContext";
-import { signupApi } from "../../Context/AuthContext/Api";
+
 import { useStyles } from "../styles";
 import { initialValues, validationSchema } from "./formInitials";
+import { useSignupMutation } from "../../generated/graphql";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
@@ -12,19 +14,25 @@ import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import { useFormik } from "formik";
+
+const message = "user created successfully";
 const SignUp = (): JSX.Element => {
+  const history = useHistory();
+
   const { setLoading } = useContext(AuthContext);
   const { showServerError, showSignupError } = useContext(AlertContext);
   const classes = useStyles();
   const [passwordType, setPasswordType] = useState("password");
   const [rePasswordType, setRePasswordType] = useState("password");
+
+  const [signup] = useSignupMutation();
 
   const handleClickShowPassword = () => {
     if (passwordType === "password") {
@@ -46,20 +54,31 @@ const SignUp = (): JSX.Element => {
     useFormik({
       initialValues: initialValues,
       validationSchema,
-      onSubmit: (values, { resetForm }) => {
+      onSubmit: async (values, { resetForm }) => {
         try {
           setLoading(true);
-
-          signupApi({
-            firstName: values.firstName,
-            lastName: values.lastName,
-            email: values.email,
-            password: values.password,
-            date_of_birth: new Date(values.date_of_birth),
-            roleId: 1,
+          const res = await signup({
+            variables: {
+              firstName: values.firstName,
+              lastName: values.lastName,
+              email: values.email,
+              password: values.password,
+              date_of_birth: new Date(values.date_of_birth).toDateString(),
+            },
           });
+
+           if (res.data?.signup.status === 400) {
+             setLoading(false);
+
+             return showSignupError();
+           }
+          if (res.data) {
+            if (res.data.signup.message === message) {
+              history.push("/");
+            }
+          }
           setLoading(false);
-        } catch (e) {
+        } catch (e: any) {
           setLoading(false);
 
           if (e.response && e.response.status === 400) {

@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { uploadedMedia } from "../../../Interfaces/Post";
-
+// import { uploadedMedia } from "../../../Interfaces/Post";
+import { Maybe, PostMedia } from "../../../generated/graphql";
 import { baseUrl } from "../../../Context/BaseApi/server";
 import { PostContext } from "../../../Context/PostContext/PostContext";
 import Card from "@material-ui/core/Card";
@@ -26,10 +26,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 interface PreviewPostProps {
-  urls: FileList;
-  setUrls: React.Dispatch<React.SetStateAction<FileList>>;
-  setUploadeMedia: React.Dispatch<React.SetStateAction<uploadedMedia[]>>;
-  uploadeMedia: uploadedMedia[];
+  urls: FileList | null;
+  setUrls: React.Dispatch<React.SetStateAction<FileList | null>>;
+  setUploadeMedia: React.Dispatch<React.SetStateAction<Maybe<PostMedia>[]>>;
+  uploadeMedia: Maybe<PostMedia>[];
   postId: number | null;
 }
 const PreviewPost = ({
@@ -42,18 +42,23 @@ const PreviewPost = ({
   const { deletePostImage } = useContext(PostContext);
   const classes = useStyles();
   const handleUploadedDeleteImage = (index: number, imageId: number) => {
-    console.log(postId);
-    deletePostImage(postId, imageId);
-    const list = [...uploadeMedia];
-    list.splice(index, 1);
-    setUploadeMedia(list);
+    if (postId) {
+      deletePostImage(postId, imageId);
+      const list = [...uploadeMedia];
+      list.splice(index, 1);
+      setUploadeMedia(list);
+    }
   };
 
-  const handleDeleteImage = (key) => {
-    const list = { ...urls };
-    delete list[key];
-
-    setUrls(list);
+  const handleDeleteImage = (key: string) => {
+    if (urls && urls.length > 1) {
+      const list = { ...urls };
+      // console.log(list);
+      delete list[parseInt(key)];
+      setUrls(list);
+    } else {
+      setUrls(null);
+    }
   };
   return (
     <>
@@ -61,18 +66,20 @@ const PreviewPost = ({
         <Box>
           {uploadeMedia.map((url, i) => {
             return (
-              <Card className={classes.root} key={i}>
-                <CardMedia
-                  className={classes.media}
-                  image={`${baseUrl}${url.mediaUrl}`}
-                />
-                <IconButton
-                  onClick={() => handleUploadedDeleteImage(i, url.id)}
-                  className={classes.close}
-                >
-                  <HighlightOffIcon />
-                </IconButton>
-              </Card>
+              url && (
+                <Card className={classes.root} key={i}>
+                  <CardMedia
+                    className={classes.media}
+                    image={`${baseUrl}${url.mediaUrl}`}
+                  />
+                  <IconButton
+                    onClick={() => handleUploadedDeleteImage(i, url.id)}
+                    className={classes.close}
+                  >
+                    <HighlightOffIcon />
+                  </IconButton>
+                </Card>
+              )
             );
           })}
         </Box>
@@ -84,10 +91,10 @@ const PreviewPost = ({
               <Card className={classes.root} key={i}>
                 <CardMedia
                   className={classes.media}
-                  image={URL.createObjectURL(urls[key])}
+                  image={URL.createObjectURL(urls[parseInt(key)])}
                 />
                 <IconButton
-                  onClick={() => handleDeleteImage(i)}
+                  onClick={() => handleDeleteImage(key)}
                   className={classes.close}
                 >
                   <HighlightOffIcon />

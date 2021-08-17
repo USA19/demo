@@ -26,7 +26,7 @@ function App() {
       <Alert />
 
       {loading && <FullPageLoader />}
-      
+
       <Router history={history}>
         <Navbar />
         {!isSignedIn

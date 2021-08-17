@@ -135,16 +135,17 @@ const EditPost = ({ open, setOpen }: EditPostProps): JSX.Element => {
   };
 
   const handleEditPost = () => {
-    if (description.length !== 0 || media.length !== 0) {
+    if (description.length !== 0 || (media && media.length !== 0)) {
       const data = new FormData();
       data.append("description", description);
       if (media) {
         Object.keys(media).map((key, i) => {
-          return data.append("images[]", media[key]);
+          return data.append("images[]", media[parseInt(key)]);
         });
       }
-      postContext.editPost(postContext.singlePost.id, data);
-
+      if (postContext.singlePost) {
+        postContext.editPost(postContext.singlePost.id, data);
+      }
       handleClose();
     }
   };
@@ -154,7 +155,12 @@ const EditPost = ({ open, setOpen }: EditPostProps): JSX.Element => {
     setDescription(e.target.value);
   };
   const handleMedia = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMedia({ ...media, ...e.target.files });
+    if (media) {
+      setMedia({ ...e.target.files, ...media });
+    } else {
+      setMedia(e.target.files);
+      console.log(e.target.files);
+    }
   };
 
   return (

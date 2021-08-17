@@ -1,7 +1,8 @@
 import React, { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../../Context/AuthContext/AuthContext";
 import { PostContext } from "../../Context/PostContext/PostContext";
-import { uploadedMedia } from "../../Interfaces/Post";
+
+import { Maybe, PostMedia } from "../../generated/graphql";
 import {
   createStyles,
   Theme,
@@ -116,16 +117,20 @@ const EditPost = ({ open, setOpen }: EditPostProps): JSX.Element => {
   const classes = useStyles();
   const context = useContext(AuthContext);
   const postContext = useContext(PostContext);
-  const [uploadeMedia, setUploadeMedia] = useState<uploadedMedia[]>([]);
+  const [uploadeMedia, setUploadeMedia] = useState<Maybe<PostMedia>[]>([]);
   const [media, setMedia] = useState<FileList | null>(null);
   const [description, setDescription] = useState<string>("");
 
   useEffect(() => {
     if (postContext.singlePost) {
       if (postContext.singlePost.PostMedia) {
+        // const med = postContext.singlePost.PostMedia;
+        // console.log("med:---", med);
         setUploadeMedia(postContext.singlePost.PostMedia);
       }
-      setDescription(postContext.singlePost.description);
+
+      postContext.singlePost.description &&
+        setDescription(postContext.singlePost.description);
     }
   }, [postContext.singlePost]);
   const handleClose = () => {
@@ -135,16 +140,21 @@ const EditPost = ({ open, setOpen }: EditPostProps): JSX.Element => {
   };
 
   const handleEditPost = () => {
-    if (description.length !== 0 || media.length !== 0) {
+    if (description.length !== 0 || (media && media.length !== 0)) {
       const data = new FormData();
-      data.append("description", description);
+
       if (media) {
         Object.keys(media).map((key, i) => {
-          return data.append("images[]", media[key]);
+          return data.append("images[]", media[parseInt(key)]);
         });
       }
-      postContext.editPost(postContext.singlePost.id, data);
-
+      if (postContext.singlePost) {
+        postContext.editPost(
+          postContext.singlePost.id,
+          description,
+          media ? data : undefined
+        );
+      }
       handleClose();
     }
   };
@@ -154,7 +164,12 @@ const EditPost = ({ open, setOpen }: EditPostProps): JSX.Element => {
     setDescription(e.target.value);
   };
   const handleMedia = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMedia({ ...media, ...e.target.files });
+    if (media) {
+      setMedia({ ...e.target.files, ...media });
+    } else {
+      setMedia(e.target.files);
+      console.log(e.target.files);
+    }
   };
 
   return (

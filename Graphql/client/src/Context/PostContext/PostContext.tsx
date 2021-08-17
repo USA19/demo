@@ -1,77 +1,102 @@
-import React, { FC, useState, useContext } from "react";
+import React, { FC, useState, useContext, useEffect } from "react";
 import { AuthContext } from "../AuthContext/AuthContext";
 import { AlertContext } from "../AlertContext/AlertContext";
-// import { useQuery } from "react-query";
+import {
+  usePostLazyQuery,
+  Post as graphqlPost,
+  useCreatePostMutation,
+  useDeletePostMutation,
+  useEditPostMutation,
+  useCreateCommentMutation,
+} from "../../generated/graphql";
 
-import { AxiosResponse } from "axios";
+// import { AxiosResponse } from "axios";
 
 import {
-  getPosts,
-  getPost,
-  createPost,
-  removePost,
-  addCommentToPostApi,
+  // addCommentToPostApi,
   removePostImage,
-  updatePost,
+  // updatePost,
+  uploadPostImageApi,
 } from "./Api";
-// import history from "../../history";
-import { Post, PostInterface } from "../../Interfaces/Post";
+// import history from "../../history"  PostInterface;
+//  PostInterface,
+import { Post } from "../../Interfaces/Post";
 import { ProviderInterface } from "../../Interfaces/ProviderInterface";
 
 interface PostContextInterface {
   posts: Post[];
-  singlePost: Post | null;
-  totalPostPages: number | null;
-  CreatePost: (data: FormData) => void;
+  singlePost: graphqlPost | null;
+  totalPostPages: number;
+  CreatePost: (description: string, imageData: FormData | undefined) => void;
   deletePost: (id: number) => void;
   deletePostImage: (id: number, imageId: number) => void;
-  editPost: (id: number, data: FormData) => void;
+  editPost: (
+    id: number,
+    description: string,
+    data: FormData | undefined
+  ) => void;
   fetchPosts: (page: string, limit: string) => void;
   fetchPost: (id: number) => void;
-  setSinglePost: (value: React.SetStateAction<Post | null>) => void;
+  setSinglePost: (value: React.SetStateAction<graphqlPost | null>) => void;
 
   addCommentToPost: (
     postId: number,
     rootId: number | null,
     comment: string
   ) => void;
+  postDataSet: graphqlPost[] | undefined;
 }
 
 export const PostContext = React.createContext<PostContextInterface>({
   posts: [],
   singlePost: null,
-  totalPostPages: null,
-  CreatePost: (data: FormData) => {},
+  totalPostPages: 1,
+  CreatePost: (description: string, imageData: FormData | undefined) => {},
   deletePost: (id: number) => {},
   deletePostImage: (id: number, imageId: number) => {},
-  editPost: (id: number, data: FormData) => {},
+  editPost: (id: number, description: string, data: FormData | undefined) => {},
   fetchPosts: (page: string, limit: string) => {},
   fetchPost: (id: number) => {},
-  setSinglePost: (value: React.SetStateAction<Post | null>) => {},
+  setSinglePost: (value: React.SetStateAction<graphqlPost | null>) => {},
 
   addCommentToPost: (
     postId: number,
     rootId: number | null,
     comment: string
   ) => {},
+  postDataSet: undefined,
 });
 
 export const PostProvider: FC = (props: ProviderInterface): JSX.Element => {
   const { setLoading } = useContext(AuthContext);
   const { showServerError } = useContext(AlertContext);
-
+  const [goPosts, { data, loading: getPostsLoading }] = usePostLazyQuery();
+  const [makePost] = useCreatePostMutation();
+  const [removePost] = useDeletePostMutation();
+  const [createComment] = useCreateCommentMutation();
   const { children } = props;
   const [posts, setPosts] = useState<Post[]>([]);
-  const [singlePost, setSinglePost] = useState<Post | null>(null);
-  const [totalPostPages, setTotalPostPages] = useState<number | null>(null);
+  const [singlePost, setSinglePost] = useState<graphqlPost | null>(null);
+  const [totalPostPages, setTotalPostPages] = useState<number>(1);
+  const [postDataSet, setDataSet] = useState<graphqlPost[] | undefined>(
+    undefined
+  );
+  const [updatePost] = useEditPostMutation();
+
+  useEffect(() => {
+    if (!getPostsLoading && data) {
+      setDataSet(data.getPosts.posts);
+      setTotalPostPages(data.getPosts.count);
+    }
+  }, [getPostsLoading, data?.getPosts.posts, data]);
   const fetchPosts = async (page = "1", limit = "10") => {
     try {
-      const result: AxiosResponse<PostInterface> = await getPosts(page, limit);
-      const {
-        data: { posts, count },
-      } = result;
-      setPosts(posts);
-      setTotalPostPages(count);
+      goPosts({
+        variables: {
+          page: parseInt(page),
+          limit: parseInt(limit),
+        },
+      });
     } catch (e) {
       console.log(e);
       showServerError();
@@ -80,28 +105,57 @@ export const PostProvider: FC = (props: ProviderInterface): JSX.Element => {
 
   const fetchPost = async (id: number) => {
     setLoading(true);
-    const result = await getPost(id);
-    setSinglePost(result);
+
     setLoading(false);
   };
-  const CreatePost = async (data: FormData) => {
+  const CreatePost = async (
+    description: string,
+    imageData: FormData | undefined
+  ) => {
     try {
       setLoading(true);
-      const res: AxiosResponse<Post> = await createPost(data);
-      const list = [res.data, ...posts];
-      setPosts(list);
-      setLoading(false);
+
+      const res = await makePost({
+        variables: {
+          description: description,
+        },
+      });
+      if (res.data && res.data.createPost.post) {
+        if (postDataSet && !imageData) {
+          const list = [res.data.createPost.post, ...postDataSet];
+          setDataSet(list);
+        }
+        if (imageData) {
+          await uploadPostImage(imageData, res.data.createPost.post.id);
+        }
+        setLoading(false);
+      }
     } catch (e) {
       showServerError();
+    }
+  };
+
+  const uploadPostImage = async (data: FormData, postId: number) => {
+    const res = await uploadPostImageApi(postId, data);
+    console.log(res.data);
+    if (postDataSet) {
+      const list = [res.data, ...postDataSet];
+      setDataSet(list);
     }
   };
 
   const deletePost = async (id: number) => {
     try {
       setLoading(true);
-      await removePost(id);
-      const list = posts.filter((post) => post.id !== id);
-      setPosts(list);
+      await removePost({
+        variables: {
+          deletePostId: id,
+        },
+      });
+      if (postDataSet) {
+        const list = postDataSet.filter((post) => post.id !== id);
+        setDataSet(list);
+      }
       setLoading(false);
     } catch (e) {
       showServerError();
@@ -118,21 +172,38 @@ export const PostProvider: FC = (props: ProviderInterface): JSX.Element => {
     }
   };
 
-  const editPost = async (id: number, data: FormData) => {
+  const editPost = async (
+    id: number,
+    description: string,
+    data: FormData | undefined
+  ) => {
     try {
       setLoading(true);
-      const res = await updatePost(id, data);
-      let list: Post[] = [];
-
-      for (let post of posts) {
-        if (post.id === id) {
-          list.push(res.data);
-        } else {
-          list.push(post);
-        }
+      if (data) {
+        uploadPostImage(data, id);
       }
-      setPosts(list);
-      setSinglePost(null);
+      const res = await updatePost({
+        variables: { editPostEditPostBody: { description }, editPostId: id },
+      });
+      let list: graphqlPost[] = [];
+      if (postDataSet) {
+        for (let post of postDataSet) {
+          if (post.id === id) {
+            res.data &&
+              res.data.editPost.post &&
+              list.push(res.data.editPost.post);
+
+            // console.log(
+            //   "=================>>>>>>>>>",
+            //   res.data && res.data.editPost.post
+            // );
+          } else {
+            list.push(post);
+          }
+        }
+        setDataSet(list);
+        setSinglePost(null);
+      }
       setLoading(false);
     } catch (e) {
       showServerError();
@@ -146,18 +217,27 @@ export const PostProvider: FC = (props: ProviderInterface): JSX.Element => {
   ) => {
     try {
       setLoading(true);
-      const res = await addCommentToPostApi(postId, rootId, comment);
-
-      let list: Post[] = [];
-      for (let item of posts) {
-        if (item.id === postId) {
-          list.push(res.data);
-        } else {
-          list.push(item);
+      const res = await createComment({
+        variables: {
+          createCommentCreateCommentBody: {
+            rootId,
+            postId,
+            comment,
+          },
+        },
+      });
+      if (res.data && postDataSet && res.data.createComment.post) {
+        let list: graphqlPost[] = [];
+        for (let post of postDataSet) {
+          if (post.id === postId) {
+            list.push(res.data.createComment.post);
+          } else {
+            list.push(post);
+          }
         }
+        setDataSet(list);
       }
 
-      setPosts([...list]);
       setLoading(false);
     } catch (e) {
       showServerError();
@@ -168,6 +248,7 @@ export const PostProvider: FC = (props: ProviderInterface): JSX.Element => {
       value={{
         totalPostPages,
         posts,
+
         singlePost,
         CreatePost,
         deletePost,
@@ -177,6 +258,7 @@ export const PostProvider: FC = (props: ProviderInterface): JSX.Element => {
         fetchPost,
         setSinglePost,
         addCommentToPost,
+        postDataSet,
       }}
     >
       {children}

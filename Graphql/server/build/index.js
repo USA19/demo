@@ -46,10 +46,11 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         const app = express_1.default();
         app.use(cors_1.default());
         app.use(imageUpload_1.default);
+        app.use("/images", express_1.default.static("./images"));
         yield server.start();
         server.applyMiddleware({ app });
         database_1.default.sync({ alter: true }).then(() => {
-            app.listen({ port: process.env.port || config_1.default.PORT }, () => console.log(`\n🚀      GraphQL is now running on http://localhost:5000/graphql`));
+            app.listen({ port: process.env.port || config_1.default.PORT }, () => console.log(`\n🚀      GraphQL is now running on http://localhost:4000/graphql/`));
         });
     }
     catch (error) {

@@ -19,12 +19,16 @@ class Comment
   @Field() public comment!: string;
 
   @Field() PostId!: number;
-  @Field() public readonly createdAt!: Date;
-  @Field() public readonly updatedAt!: Date;
-  @Field((type) => [Comment], { nullable: true })
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+  @Field((type) => [Comment], { nullable: "itemsAndList" })
   public Comments?: Comment[];
   @Field((type) => User, { nullable: true })
   public User?: User;
+  @Field({ nullable: true })
+  public CommentId!: number;
+  @Field()
+  public UserId!: number;
   public static associations: {
     CommentId: Association<Comment, Comment>;
     User: Association<Comment, User>;

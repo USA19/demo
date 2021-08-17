@@ -12,9 +12,9 @@ class Role
   public id!: number; // Note that the `null assertion` `!` is required in strict mode.
   @Field()
   public name!: string;
-  @Field()
+
   public readonly createdAt!: Date;
-  @Field()
+
   public readonly updatedAt!: Date;
 }
 

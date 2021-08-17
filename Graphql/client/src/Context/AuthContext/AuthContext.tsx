@@ -1,7 +1,7 @@
-import { FC, useState, createContext, SetStateAction } from "react";
+import { FC, useState, createContext, SetStateAction, useEffect } from "react";
 import { ProviderInterface } from "../../Interfaces/ProviderInterface";
-
-import { loggedInUserApi, editUser } from "./Api";
+import { useGetLoggedInUSerLazyQuery } from "../../generated/graphql";
+import { editUser } from "./Api";
 import history from "../../history";
 import { PostUser } from "../../Interfaces/User";
 import { removeToken } from "../../Utils/Token";
@@ -9,10 +9,10 @@ import { AxiosResponse } from "axios";
 
 interface AuthContextInterface {
   isSignedIn: boolean;
-  user: PostUser;
+  user: PostUser | null;
   loading: boolean;
   setIsSignedIn: (data: boolean) => void;
-  setUser: (data: PostUser | null) => void;
+  setUser: (data: PostUser) => void;
   handleSignout: () => void;
   setLoading: (value: SetStateAction<boolean>) => void;
   getLoggedInUser: () => void;
@@ -24,7 +24,7 @@ export const AuthContext = createContext<AuthContextInterface>({
   user: null,
   loading: false,
   setIsSignedIn: (data: boolean) => {},
-  setUser: (data: PostUser | null) => {},
+  setUser: (data: PostUser) => {},
   handleSignout: () => {},
   setLoading: (value: SetStateAction<boolean>) => {},
   getLoggedInUser: () => {},
@@ -37,6 +37,16 @@ export const AuthProvider: FC = (props: ProviderInterface): JSX.Element => {
   const [user, userSetter] = useState<PostUser | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
+  const [
+    LoggedInUserGraphql,
+    { data: loaggedInUserData, loading: loggedInUserLoading },
+  ] = useGetLoggedInUSerLazyQuery();
+
+  useEffect(() => {
+    if (!loggedInUserLoading && loaggedInUserData) {
+      setUser(loaggedInUserData.getLoggedInUser as PostUser);
+    }
+  }, [loaggedInUserData, loggedInUserLoading]);
   const setUser = (user: PostUser) => {
     userSetter(user);
   };
@@ -54,9 +64,10 @@ export const AuthProvider: FC = (props: ProviderInterface): JSX.Element => {
   const getLoggedInUser = async () => {
     try {
       setLoading(true);
-      const user: PostUser = await loggedInUserApi();
+      // const user: PostUser = await loggedInUserApi();
+      LoggedInUserGraphql();
       isSignedInSetter(true);
-      userSetter(user);
+      // userSetter(user);
       setLoading(false);
     } catch (e) {
       setLoading(false);
@@ -66,9 +77,11 @@ export const AuthProvider: FC = (props: ProviderInterface): JSX.Element => {
   const updateUser = async (data: FormData) => {
     try {
       setLoading(true);
-      const res: AxiosResponse<PostUser> = await editUser(data);
+      if (user) {
+        const res: AxiosResponse<PostUser> = await editUser(user.id, data);
 
-      userSetter(res.data);
+        userSetter(res.data);
+      }
       setLoading(false);
     } catch (e) {
       setLoading(false);

@@ -13,8 +13,7 @@ class User
 {
   @Field()
   public id!: number; // Note that the `null assertion` `!` is required in strict mode.
-  @Field()
-  public name!: string;
+
   @Field()
   public firstName!: string;
   @Field()
@@ -22,21 +21,19 @@ class User
   @Field()
   public email!: string;
 
-  @Field() // timestamps!
+  @Field({ nullable: true }) // timestamps!
   date_of_birth!: Date;
 
-  @Field({ nullable: true })
   bio!: string;
   @Field({ nullable: true })
   profileImageUrl!: string;
-  @Field()
+
   password!: string;
   @Field({ nullable: true })
   RoleId!: number;
 
-  @Field()
   public readonly createdAt!: Date;
-  @Field()
+
   public readonly updatedAt!: Date;
   @Field((type) => Role, { nullable: true })
   public readonly role?: Role;

@@ -1,6 +1,6 @@
 import React from "react";
-
-import { Post } from "../../../Interfaces/Post";
+import { Post } from "../../../generated/graphql";
+// import { Post } from "../../../Interfaces/Post";
 import ShowSinglePot from "./ShowSinglePot";
 
 // import { toTitleCase } from "../../../Utils/CamelCase";
@@ -8,19 +8,20 @@ import ShowSinglePot from "./ShowSinglePot";
 // import Box from "@material-ui/core/Box";
 
 interface PostCardProps {
-  posts: Post[];
+  posts: Post[] | undefined;
 }
 export default function PostCard({ posts }: PostCardProps) {
   return (
-    // posts &&
-    // posts.length !== 0 && (
     <>
-      {posts.map((post, i) => (
+      {posts && posts.length !== 0 && (
         <>
-          <ShowSinglePot post={post} key={i} />
+          {posts.map((post, i) => (
+            <>
+              <ShowSinglePot post={post} key={i} />
+            </>
+          ))}
         </>
-      ))}
+      )}
     </>
   );
-  // );
 }

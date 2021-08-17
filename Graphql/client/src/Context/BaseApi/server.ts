@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getToken } from "../../Utils/Token";
 
-export const baseUrl = "http://localhost:5000/";
+export const baseUrl = "http://localhost:4000/";
 
 const server = axios.create({
   baseURL: baseUrl,

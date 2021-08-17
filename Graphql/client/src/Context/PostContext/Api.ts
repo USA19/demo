@@ -1,7 +1,9 @@
 import server from "../BaseApi/server";
 import { Post, PostInterface } from "../../Interfaces/Post";
+import { Post as graphqlPost } from "../../generated/graphql";
 
 import { AxiosResponse } from "axios";
+
 
 export const getPosts = (
   page = "1",
@@ -15,7 +17,7 @@ export const getPost = async (id: number): Promise<Post> => {
     const response = await server.get(`/getPost/${id}`);
 
     return response.data;
-  } catch (e) {
+  } catch (e: any) {
     console.log(e);
     return e;
   }
@@ -52,4 +54,11 @@ export const addCommentToPostApi = async (
     rootId,
     comment,
   }); //postId
+};
+
+export const uploadPostImageApi = async (
+  postId: number,
+  image: FormData
+): Promise<AxiosResponse<graphqlPost>> => {
+  return server.post(`/uploadPostImage/${postId}`, image);
 };

@@ -13,21 +13,21 @@ class Post
 {
   @Field()
   public id!: number; // Note that the `null assertion` `!` is required in strict mode.
-  @Field({ nullable: true })
+  @Field()
   public description!: string;
   @Field()
   public UserId!: number;
   @Field((type) => User, { nullable: true })
   public readonly User?: User;
-  @Field((type) => [Comments], { nullable: true })
+  @Field((type) => [Comments], { nullable: "itemsAndList" })
   public readonly Comments?: Comments[];
 
   @Field()
   public readonly createdAt!: Date;
-  @Field()
+
   public readonly updatedAt!: Date;
 
-  @Field((type) => [PostMedia], { nullable: true })
+  @Field((type) => [PostMedia], { nullable: "itemsAndList" })
   public readonly PostMedia!: PostMedia[];
   public static associations: {
     postMedia: Association<Post, PostMedia>;

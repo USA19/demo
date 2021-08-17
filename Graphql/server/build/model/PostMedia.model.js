@@ -22,21 +22,13 @@ __decorate([
     __metadata("design:type", Number)
 ], PostMedia.prototype, "id", void 0);
 __decorate([
-    type_graphql_1.Field({ nullable: true }),
+    type_graphql_1.Field(),
     __metadata("design:type", String)
 ], PostMedia.prototype, "mediaUrl", void 0);
 __decorate([
-    type_graphql_1.Field({ nullable: true }),
+    type_graphql_1.Field(),
     __metadata("design:type", Number)
 ], PostMedia.prototype, "PostId", void 0);
-__decorate([
-    type_graphql_1.Field(),
-    __metadata("design:type", Date)
-], PostMedia.prototype, "createdAt", void 0);
-__decorate([
-    type_graphql_1.Field(),
-    __metadata("design:type", Date)
-], PostMedia.prototype, "updatedAt", void 0);
 PostMedia = __decorate([
     type_graphql_1.ObjectType()
 ], PostMedia);

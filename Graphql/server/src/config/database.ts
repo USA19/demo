@@ -1,8 +1,8 @@
 import { Sequelize } from "sequelize";
-
-const sequelize = new Sequelize("sammy", "tecmint", "securep@wd", {
+import config from "./config";
+const sequelize = new Sequelize(config.DBNAME, config.DBUSER, config.DBPASS, {
   dialect: "postgres", //which db we using
-  host: "localhost",
+  host: config.DBHOST,
   define: {
     timestamps: true, // it auto create created_at, updated_at in every table
   },

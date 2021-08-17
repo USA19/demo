@@ -1,6 +1,5 @@
 import { useContext, useEffect } from "react";
 import { Route, Router } from "react-router-dom";
-
 import Navbar from "./Navbar/Navbar";
 import history from "./history";
 import { getToken } from "./Utils/Token";
@@ -13,14 +12,17 @@ import Alert from "./Components/Alert";
 function App() {
   const { isSignedIn, loading, getLoggedInUser } = useContext(AuthContext);
   const { fetchPosts } = useContext(PostContext);
+
   useEffect(() => {
     const token = getToken();
 
     if (token) {
       fetchPosts("1", "10");
+
       getLoggedInUser();
     }
   }, []);
+
   return (
     <PostProvider>
       <Alert />
@@ -30,15 +32,17 @@ function App() {
       <Router history={history}>
         <Navbar />
         {!isSignedIn
-          ? authRoutes.map((route) => (
+          ? authRoutes.map((route, index) => (
               <Route
+                key={index}
                 path={route.path}
                 component={route.component}
                 exact={route.exact}
               />
             ))
-          : AppRoutes.map((route) => (
+          : AppRoutes.map((route, index) => (
               <Route
+                key={index}
                 path={route.path}
                 component={route.component}
                 exact={route.exact}

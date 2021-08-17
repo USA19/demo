@@ -33,12 +33,12 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 type SingleCommentProp = {
-  postId: number;
+  postId: number | undefined;
   comment: commentInterface;
   childComments: commentInterface[];
   setShowReply: (value: React.SetStateAction<boolean>) => void;
-  setRootId: (value: React.SetStateAction<number>) => void;
-  rootId: number;
+  setRootId: (value: React.SetStateAction<number | null>) => void;
+  rootId: number | null;
   showReply: boolean;
   childs: commentInterface[];
 };
@@ -53,7 +53,6 @@ const SingleComment = ({
   childs,
 }: SingleCommentProp): JSX.Element => {
   const classes = useStyles();
-  
 
   // const [showReply, setShowReply] = useState(false);
   // const [rootId, setRootId] = useState<number | null>(null);

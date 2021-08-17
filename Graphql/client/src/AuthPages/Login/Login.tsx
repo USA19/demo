@@ -1,9 +1,11 @@
-import React, { useState, useContext } from "react";
-//  import { useQuery } from "react-query";
+import { useState, useContext } from "react";
 import { AuthContext } from "../../Context/AuthContext/AuthContext";
 import { AlertContext } from "../../Context/AlertContext/AlertContext";
 import { useStyles } from "../styles";
 import { initialValues, validationSchema } from "./formInitials";
+
+import { setToken } from "../../Utils/Token";
+import { useLoginMutation } from "../../generated/graphql";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import InputAdornment from "@material-ui/core/InputAdornment";
@@ -19,9 +21,13 @@ import Typography from "@material-ui/core/Typography";
 import { useFormik } from "formik";
 import { useHistory } from "react-router-dom";
 import Container from "@material-ui/core/Container";
-import { loginApi } from "../../Context/AuthContext/Api";
+import { PostUser } from "../../Interfaces/User";
+
+// import { loginApi } from "../../Context/AuthContext/Api";
 
 const SignIn = (): JSX.Element => {
+  const [login] = useLoginMutation();
+
   const history = useHistory();
   const classes = useStyles();
   const [passwordType, setPasswordType] = useState("password");
@@ -43,16 +49,31 @@ const SignIn = (): JSX.Element => {
         try {
           // Loader();
           setLoading(true);
-          const user = await loginApi(values);
-          setIsSignedIn(true);
-          setUser(user);
+          const res = await login({
+            variables: {
+              email: values.email,
+              password: values.password,
+            },
+          });
+          if (res.data?.login.status === 400) {
+            setLoading(false);
+
+            return showLoginError();
+          }
+          if (res.data && res.data.login.user) {
+            setUser(res.data.login.user as PostUser);
+            setIsSignedIn(true);
+          }
+          if (res.data && res.data.login.token) {
+            setToken(res.data.login.token);
+            history.push("/");
+          }
           setLoading(false);
 
-          history.push("/");
           // Loader();
-        } catch (e) {
+        } catch (e: any) {
           // Loader();
-          if (e.response && e.response.status === 400) {
+          if (e && e.response && e.response.status === 400) {
             setLoading(false);
 
             showLoginError();

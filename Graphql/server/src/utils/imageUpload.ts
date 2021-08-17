@@ -1,8 +1,8 @@
 import { Request, Response, Router } from "express";
 import multer, { FileFilterCallback } from "multer";
 import Post from "../model/Post.model";
-
 import PostMedia from "../model/PostMedia.model";
+import User from "../model/User.model";
 import { deleteFile } from "./imageDelete";
 
 const router = Router();
@@ -35,29 +35,50 @@ const postImageHandler = multer({
   fileFilter: fileFilter,
 }).any();
 
-// const userImageHandler = multer({
-//   storage: fileStorage,
-//   fileFilter: fileFilter,
-// }).single("image");
+const userImageHandler = multer({
+  storage: fileStorage,
+  fileFilter: fileFilter,
+}).single("image");
 
 router.post(
   "/uploadPostImage/:postId",
   postImageHandler,
   async (req: Request, res: Response) => {
     try {
-      if (req.files) {
-        let postMedia = [];
-
-        for (let file of req.files as Express.Multer.File[]) {
-          postMedia.push({
-            PostId: parseInt(req.params.postId),
-            mediaUrl: file.path,
-          });
-        }
-        // console.log("🚀 ~ file: post.controller.js ~ line 40 ~");
-        const media: PostMedia[] = await PostMedia.bulkCreate(postMedia);
-        res.status(200).json(media);
+      if (!req.files) {
+        return res.status(400).json({ message: "no image provided " });
       }
+      const post = await Post.findByPk(req.params.postId, {
+        include: [
+          {
+            model: User,
+            attributes: [
+              "id",
+              "firstName",
+              "lastName",
+              "email",
+              "profileImageUrl",
+              "RoleId",
+            ],
+          },
+        ],
+      });
+      if (!post) {
+        return res.status(400).json({ message: "no post exist" });
+      }
+
+      let postMedia = [];
+
+      for (let file of req.files as Express.Multer.File[]) {
+        postMedia.push({
+          PostId: post.id,
+          mediaUrl: file.path,
+        });
+      }
+      // console.log("🚀 ~ file: post.controller.js ~ line 40 ~");
+      const media: PostMedia[] = await PostMedia.bulkCreate(postMedia);
+      await post.reload();
+      res.status(200).json(post);
     } catch (e) {
       console.log(e);
       res
@@ -68,7 +89,7 @@ router.post(
 );
 
 router.delete(
-  "/deletePostImage",
+  "/deletePostImage/:id/:imageId",
 
   async (req: Request, res: Response) => {
     try {
@@ -97,4 +118,22 @@ router.delete(
   }
 );
 
+router.put(
+  "/editUser/:userId",
+  userImageHandler,
+  async (req: Request, res: Response) => {
+    let user: User | null = await User.findByPk(req.params.userId);
+    if (!user) {
+      return res.status(404).json({ message: "no user found" });
+    }
+    if (req.file) {
+      user.profileImageUrl = req.file.path;
+    }
+    user.firstName = req.body.firstName;
+    user.lastName = req.body.lastName;
+    user.date_of_birth = new Date(req.body.date_of_birth);
+    await user.save();
+    res.status(200).json(user);
+  }
+);
 export default router;

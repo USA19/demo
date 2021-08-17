@@ -26,14 +26,6 @@ __decorate([
     type_graphql_1.Field(),
     __metadata("design:type", String)
 ], Role.prototype, "name", void 0);
-__decorate([
-    type_graphql_1.Field(),
-    __metadata("design:type", Date)
-], Role.prototype, "createdAt", void 0);
-__decorate([
-    type_graphql_1.Field(),
-    __metadata("design:type", Date)
-], Role.prototype, "updatedAt", void 0);
 Role = __decorate([
     type_graphql_1.ObjectType()
 ], Role);

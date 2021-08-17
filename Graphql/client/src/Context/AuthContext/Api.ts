@@ -1,6 +1,6 @@
 import server from "../BaseApi/server";
 import { signinResponse } from "../../Interfaces/User";
-import { User, signin ,PostUser} from "../../Interfaces/User";
+import { User, signin, PostUser } from "../../Interfaces/User";
 import { AxiosResponse } from "axios";
 import { setToken } from "../../Utils/Token";
 
@@ -32,8 +32,9 @@ export const loggedInUserApi = async (): Promise<PostUser> => {
   return response.data.user;
 };
 
-
-
-export const editUser = (data: FormData): Promise<AxiosResponse<PostUser>> => {
-  return server.put("/edit", data);
+export const editUser = (
+  id: number,
+  data: FormData
+): Promise<AxiosResponse<PostUser>> => {
+  return server.put(`/editUser/${id}`, data);
 };

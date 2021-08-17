@@ -55,6 +55,19 @@ __decorate([
 PostResponse = __decorate([
     type_graphql_1.ObjectType()
 ], PostResponse);
+let PostsResponse = class PostsResponse {
+};
+__decorate([
+    type_graphql_1.Field(() => [Post_model_1.default]),
+    __metadata("design:type", Array)
+], PostsResponse.prototype, "posts", void 0);
+__decorate([
+    type_graphql_1.Field(() => Number),
+    __metadata("design:type", Number)
+], PostsResponse.prototype, "count", void 0);
+PostsResponse = __decorate([
+    type_graphql_1.ObjectType()
+], PostsResponse);
 // input for creating the post
 let createPostBody = class createPostBody {
 };
@@ -150,8 +163,9 @@ let PostResolver = class PostResolver {
                 return { posts, count: pages };
             }
             catch (e) {
-                return { message: "something went wrong in postAddRole" };
                 console.trace(e);
+                // return { message: "something went wrong in postAddRole" };
+                throw new Error("some thing went wront at fetch posts");
             }
         });
     }
@@ -175,7 +189,6 @@ let PostResolver = class PostResolver {
                                 "RoleId",
                             ],
                         },
-                        { model: PostMedia_model_1.default },
                     ],
                 });
                 if (createdPost) {
@@ -264,7 +277,7 @@ let PostResolver = class PostResolver {
                 if (req.userId !== post.UserId) {
                     return { message: "Only orignal creator can delete the post" };
                 }
-                post.description = req.body.description;
+                post.description = body.description;
                 yield post.save();
                 yield post.reload();
                 return { post };
@@ -287,13 +300,11 @@ let PostResolver = class PostResolver {
                 if (req.userId !== post.UserId) {
                     return { message: "Only orignal creator can delete the post" };
                 }
-                yield PostMedia_model_1.default.destroy({
-                    where: { id: req.params.imageId },
+                yield Post_model_1.default.destroy({
+                    where: { id: id },
                 });
                 for (let postMedia of post.PostMedia) {
-                    if (postMedia.id === parseInt(req.params.imageId)) {
-                        imageDelete_1.deleteFile(postMedia.mediaUrl);
-                    }
+                    imageDelete_1.deleteFile(postMedia.mediaUrl);
                 }
                 return {
                     message: "image deleted successfully",
@@ -307,7 +318,7 @@ let PostResolver = class PostResolver {
     }
 };
 __decorate([
-    type_graphql_1.Query(() => PostResponse),
+    type_graphql_1.Query(() => PostsResponse),
     type_graphql_1.UseMiddleware(auth_1.isAuth),
     __param(0, type_graphql_1.Arg("limit")),
     __param(1, type_graphql_1.Arg("page")),
@@ -328,7 +339,7 @@ __decorate([
     type_graphql_1.Mutation(() => PostResponse),
     type_graphql_1.UseMiddleware(auth_1.isAuth),
     __param(0, type_graphql_1.Arg("id")),
-    __param(1, type_graphql_1.Arg("createPostBody")),
+    __param(1, type_graphql_1.Arg("editPostBody")),
     __param(2, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, createPostBody, Object]),

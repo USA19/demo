@@ -13,7 +13,7 @@ export interface signin {
 }
 
 export interface signinResponse {
-  user:PostUser
+  user: PostUser;
   token: string;
 }
 
@@ -23,6 +23,6 @@ export interface PostUser {
   email: string;
   id: number;
   date_of_birth: Date;
-  RoleId: number;
+  RoleId?: number;
   profileImageUrl?: string;
 }

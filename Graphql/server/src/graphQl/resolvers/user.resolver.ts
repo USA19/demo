@@ -8,12 +8,14 @@ import {
   Field,
   InputType,
   UseMiddleware,
+  Ctx,
 } from "type-graphql";
 import User from "../../model/User.model";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import config from "../../config/config";
 import { isAuth } from "../../utils/auth";
+import { MyContext } from "../../interfaces/context";
 @ObjectType()
 class LoginResponse {
   @Field(() => String, { nullable: true })
@@ -24,6 +26,8 @@ class LoginResponse {
 
   @Field(() => String, { nullable: true })
   token?: string;
+  @Field(() => Number)
+  status!: number;
 }
 
 @InputType()
@@ -44,6 +48,8 @@ export class signupBody {
 class SignupResponse {
   @Field(() => String, { nullable: true })
   message?: string;
+  @Field(() => Number)
+  status!: number;
 }
 @Resolver()
 export class UserResollver {
@@ -57,23 +63,25 @@ export class UserResollver {
         where: { email: email },
       });
 
-      console.log("User email and password ");
       if (!user) {
-        return { message: "no user with message found " };
+        return { status: 400, message: "no user with message found " };
       }
 
       const doMatch = bcrypt.compareSync(password, user.password);
       if (!doMatch) {
-        return { message: "you have entered wrong email or password" };
+        return {
+          status: 400,
+          message: "you have entered wrong email or password",
+        };
       }
       const token = jwt.sign({ userId: user.id }, config.JWTKEY, {
         expiresIn: "365d",
       });
       // res.status(200).json({ user, token });
-      return { user, token };
+      return { status: 200, user, token };
     } catch (e) {
       console.trace(e);
-      return { message: "something went wrong in login" };
+      return { status: 500, message: "something went wrong in login" };
       // res.status(200).json({ messsage: "something went wrong in login" });
     }
   }
@@ -89,6 +97,7 @@ export class UserResollver {
       });
       if (user) {
         return {
+          status: 400,
           message: "the user with this email already exist try other",
         };
       }
@@ -105,15 +114,20 @@ export class UserResollver {
 
       await newUser.save();
 
-      return { message: "user created successfully" };
+      return { status: 200, message: "user created successfully" };
     } catch (e) {
       console.trace(e);
-      return { message: "something went wrong in signup" };
+      return { status: 500, message: "something went wrong in signup" };
     }
   }
   @UseMiddleware(isAuth)
-  @Query(() => String)
-  async hello() {
-    return "hello";
+  @Query(() => User)
+  async getLoggedInUser(@Ctx() { req }: MyContext): Promise<User> {
+    const user: User | null = await User.findByPk(req.userId);
+    if (!user) {
+      throw new Error("no user found");
+    } else {
+      return user;
+    }
   }
 }

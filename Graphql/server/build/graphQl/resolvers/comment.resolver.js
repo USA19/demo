@@ -60,6 +60,10 @@ __decorate([
     type_graphql_1.Field(() => Number, { nullable: true }),
     __metadata("design:type", Object)
 ], createCommentBody.prototype, "rootId", void 0);
+__decorate([
+    type_graphql_1.Field(() => Number),
+    __metadata("design:type", Number)
+], createCommentBody.prototype, "postId", void 0);
 createCommentBody = __decorate([
     type_graphql_1.InputType()
 ], createCommentBody);
@@ -110,10 +114,10 @@ let CommentResolver = class CommentResolver {
             }
         });
     }
-    createComment(postId, id, body, { req }) {
+    createComment(body, { req }) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const post = yield Post_model_1.default.findByPk(id, {
+                const post = yield Post_model_1.default.findByPk(body.postId, {
                     include: [
                         {
                             model: User_model_1.default,
@@ -183,7 +187,7 @@ let CommentResolver = class CommentResolver {
                 const comment = new Comment_model_1.default({
                     CommentId: body.rootId || null,
                     comment: body.comment,
-                    PostId: postId,
+                    PostId: body.postId,
                     UserId: req.userId,
                 });
                 yield comment.save();
@@ -207,12 +211,10 @@ __decorate([
 __decorate([
     type_graphql_1.Mutation(() => CommentResponse),
     type_graphql_1.UseMiddleware(auth_1.isAuth),
-    __param(0, type_graphql_1.Arg("postId")),
-    __param(1, type_graphql_1.Arg("id")),
-    __param(2, type_graphql_1.Arg("createCommentBody")),
-    __param(3, type_graphql_1.Ctx()),
+    __param(0, type_graphql_1.Arg("createCommentBody")),
+    __param(1, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Number, createCommentBody, Object]),
+    __metadata("design:paramtypes", [createCommentBody, Object]),
     __metadata("design:returntype", Promise)
 ], CommentResolver.prototype, "createComment", null);
 CommentResolver = __decorate([

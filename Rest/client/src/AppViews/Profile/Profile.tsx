@@ -41,7 +41,8 @@ export default function Profile() {
     }
   };
   const handleProfileImageUplaod = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setProfileImage(e.target.files[0]);
+    // setProfileImage(e.target.files[0]);
+    console.log(e.target.files);
   };
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } =
     useFormik({

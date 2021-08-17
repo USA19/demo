@@ -125,18 +125,18 @@ const CreatePost = ({ open, setOpen }: CreatePostProps): JSX.Element => {
   };
 
   const handleCreatePost = () => {
-    if ((description && description.length !== 0) || media.length !== 0) {
+    if (
+      (description && description.length !== 0) ||
+      (media && media.length !== 0)
+    ) {
       const data = new FormData();
       data.append("description", description);
-
       if (media) {
         Object.keys(media).map((key, i) => {
-          return data.append("images[]", media[key]);
+          return data.append("images[]", media[parseInt(key)]);
         });
       }
-
       postContext.CreatePost(data);
-
       handleClose();
     }
   };
@@ -147,7 +147,14 @@ const CreatePost = ({ open, setOpen }: CreatePostProps): JSX.Element => {
     setDescription(e.target.value);
   };
   const handleMedia = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMedia({ ...media, ...e.target.files });
+    if (media) {
+      setMedia({ ...e.target.files, ...media });
+      // console.log("====================>>>>>>", media[0]);
+      // Object.keys(media).map((key: string, i) => media[parseInt(key)]);
+    } else {
+      setMedia(e.target.files);
+      console.log(e.target.files);
+    }
   };
 
   return (

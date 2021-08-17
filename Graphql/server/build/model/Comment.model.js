@@ -32,21 +32,21 @@ __decorate([
     __metadata("design:type", Number)
 ], Comment.prototype, "PostId", void 0);
 __decorate([
-    type_graphql_1.Field(),
-    __metadata("design:type", Date)
-], Comment.prototype, "createdAt", void 0);
-__decorate([
-    type_graphql_1.Field(),
-    __metadata("design:type", Date)
-], Comment.prototype, "updatedAt", void 0);
-__decorate([
-    type_graphql_1.Field((type) => [Comment_1], { nullable: true }),
+    type_graphql_1.Field((type) => [Comment_1], { nullable: "itemsAndList" }),
     __metadata("design:type", Array)
 ], Comment.prototype, "Comments", void 0);
 __decorate([
     type_graphql_1.Field((type) => User_model_1.default, { nullable: true }),
     __metadata("design:type", User_model_1.default)
 ], Comment.prototype, "User", void 0);
+__decorate([
+    type_graphql_1.Field({ nullable: true }),
+    __metadata("design:type", Number)
+], Comment.prototype, "CommentId", void 0);
+__decorate([
+    type_graphql_1.Field(),
+    __metadata("design:type", Number)
+], Comment.prototype, "UserId", void 0);
 Comment = Comment_1 = __decorate([
     type_graphql_1.ObjectType()
 ], Comment);

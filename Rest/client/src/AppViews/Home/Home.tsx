@@ -8,12 +8,12 @@ import PostCard from "../Components/PostCard/PostCard";
 import PaginationComponent from "../../Components/Pagination";
 // import useStyles from "./styles";
 
-const Home = ():JSX.Element => {
+const Home = (): JSX.Element => {
   const context = useContext(PostContext);
-  const [page, setPage] = useState<string>("1");
+  const [page, setPage] = useState<number>(1);
   const [limit] = useState<string>("10");
   useEffect(() => {
-    context.fetchPosts(page, limit);
+    context.fetchPosts(String(page), limit);
   }, [page]);
   return (
     <Container maxWidth="sm" style={{ marginTop: 20 }}>

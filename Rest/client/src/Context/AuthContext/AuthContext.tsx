@@ -9,10 +9,10 @@ import { AxiosResponse } from "axios";
 
 interface AuthContextInterface {
   isSignedIn: boolean;
-  user: PostUser;
+  user: PostUser | null;
   loading: boolean;
   setIsSignedIn: (data: boolean) => void;
-  setUser: (data: PostUser | null) => void;
+  setUser: (data: PostUser) => void;
   handleSignout: () => void;
   setLoading: (value: SetStateAction<boolean>) => void;
   getLoggedInUser: () => void;
@@ -24,7 +24,7 @@ export const AuthContext = createContext<AuthContextInterface>({
   user: null,
   loading: false,
   setIsSignedIn: (data: boolean) => {},
-  setUser: (data: PostUser | null) => {},
+  setUser: (data: PostUser) => {},
   handleSignout: () => {},
   setLoading: (value: SetStateAction<boolean>) => {},
   getLoggedInUser: () => {},

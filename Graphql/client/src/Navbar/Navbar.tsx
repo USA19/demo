@@ -34,7 +34,7 @@ export default function Nav() {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const handleDrawer = () => {
-    setDrawerOpen(true);
+    setDrawerOpen(!drawerOpen);
   };
   const handleDrawerClose = () => {
     setDrawerOpen(false);
@@ -44,11 +44,11 @@ export default function Nav() {
     handleMenuClose();
   };
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const isMenuOpen = Boolean(anchorEl);
 
-  const handleProfileMenuOpen = (event) => {
+  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);
   };
 

@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 interface Iprop {
-  Comments: commentInterface[];
+  Comments: commentInterface[] | undefined;
   postId: number;
 }
 const AlignItemsList = ({ Comments, postId }: Iprop): JSX.Element => {

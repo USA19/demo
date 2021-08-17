@@ -20,7 +20,7 @@ import { ProviderInterface } from "../../Interfaces/ProviderInterface";
 
 interface PostContextInterface {
   posts: Post[];
-  singlePost: Post;
+  singlePost: Post | null;
   totalPostPages: number;
   CreatePost: (data: FormData) => void;
   deletePost: (id: number) => void;
@@ -28,11 +28,11 @@ interface PostContextInterface {
   editPost: (id: number, data: FormData) => void;
   fetchPosts: (page: string, limit: string) => void;
   fetchPost: (id: number) => void;
-  setSinglePost: (value: React.SetStateAction<Post>) => void;
+  setSinglePost: (value: React.SetStateAction<Post | null>) => void;
 
   addCommentToPost: (
     postId: number,
-    rootId: number | number,
+    rootId: number | null,
     comment: string
   ) => void;
 }
@@ -40,18 +40,18 @@ interface PostContextInterface {
 export const PostContext = React.createContext<PostContextInterface>({
   posts: [],
   singlePost: null,
-  totalPostPages: null,
+  totalPostPages: 1,
   CreatePost: (data: FormData) => {},
   deletePost: (id: number) => {},
   deletePostImage: (id: number, imageId: number) => {},
   editPost: (id: number, data: FormData) => {},
   fetchPosts: (page: string, limit: string) => {},
   fetchPost: (id: number) => {},
-  setSinglePost: (value: React.SetStateAction<Post>) => {},
+  setSinglePost: (value: React.SetStateAction<Post | null>) => {},
 
   addCommentToPost: (
     postId: number,
-    rootId: number | number,
+    rootId: number | null,
     comment: string
   ) => {},
 });
@@ -62,8 +62,8 @@ export const PostProvider: FC = (props: ProviderInterface): JSX.Element => {
 
   const { children } = props;
   const [posts, setPosts] = useState<Post[]>([]);
-  const [singlePost, setSinglePost] = useState<Post>(null);
-  const [totalPostPages, setTotalPostPages] = useState<number | null>(null);
+  const [singlePost, setSinglePost] = useState<Post | null>(null);
+  const [totalPostPages, setTotalPostPages] = useState<number>(1);
   const fetchPosts = async (page = "1", limit = "10") => {
     try {
       const result: AxiosResponse<PostInterface> = await getPosts(page, limit);
@@ -141,7 +141,7 @@ export const PostProvider: FC = (props: ProviderInterface): JSX.Element => {
 
   const addCommentToPost = async (
     postId: number,
-    rootId: number | number,
+    rootId: number | null,
     comment: string
   ) => {
     try {

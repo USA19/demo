@@ -24,7 +24,9 @@ import MenuItem from "@material-ui/core/MenuItem";
 
 import { AuthContext } from "../../../Context/AuthContext/AuthContext";
 
-import { Post } from "../../../Interfaces/Post";
+// import { Post } from "../../../Interfaces/Post";
+import { Post } from "../../../generated/graphql";
+
 import { baseUrl } from "../../../Context/BaseApi/server";
 interface IProps {
   post: Post;
@@ -70,6 +72,7 @@ function ShowSinglePot({ post }: IProps) {
   };
   const handleEdit = (post: Post) => {
     setSinglePost(post);
+
     setOpen(true);
     handleClose();
   };
@@ -80,6 +83,9 @@ function ShowSinglePot({ post }: IProps) {
   };
 
   const { user } = React.useContext(AuthContext);
+  // console.log(user);
+  // console.log(post);
+
   const classes = useStyles();
   return (
     <>
@@ -97,17 +103,16 @@ function ShowSinglePot({ post }: IProps) {
             />
           }
           action={
-            user &&
-            post &&
-            post.User &&
-            user.id === post.User.id && (
+            user && post && user.id === post.UserId ? (
               <IconButton aria-label="settings" onClick={handleClick}>
                 <MoreVertIcon />
               </IconButton>
+            ) : (
+              <div>yes</div>
             )
           }
           // title={toTitleCase(`${post.User.email}`)}
-          title={`${post.User.email}`}
+          title={post && post.User ? `${post.User.email}` : ""}
           subheader={post.createdAt && new Date(post.createdAt).toDateString()}
         />
         <Menu
@@ -120,22 +125,25 @@ function ShowSinglePot({ post }: IProps) {
           <MenuItem onClick={() => handleEdit(post)}>Edit</MenuItem>
           <MenuItem onClick={() => handleDelete(post.id)}>Delete</MenuItem>
         </Menu>
-        {post.PostMedia && post.PostMedia.length !== 0 ? (
+        {post && post.PostMedia && post.PostMedia.length !== 0 ? (
           <Carousel>
-            {post.PostMedia.map((media) => (
-              <CardMedia
-                className={classes.media}
-                image={baseUrl + media.mediaUrl}
-                title={post.description}
-              />
-            ))}
+            {post.PostMedia.map(
+              (media) =>
+                media && (
+                  <CardMedia
+                    className={classes.media}
+                    image={baseUrl + media.mediaUrl}
+                    // title={post.description && post.description}
+                  />
+                )
+            )}
           </Carousel>
         ) : (
           ""
         )}
         <CardContent>
           <Typography variant="body2" color="textSecondary" component="p">
-            {post.description}
+            {post.description && post.description}
           </Typography>
         </CardContent>
         <CardActions disableSpacing>
@@ -148,7 +156,10 @@ function ShowSinglePot({ post }: IProps) {
         </CardActions>
 
         <Collapse in={expanded} timeout="auto" unmountOnExit>
-          <Comments postId={post.id} Comments={post.Comments} />
+          <Comments
+            postId={post.id}
+            Comments={post.Comments ? post.Comments : []}
+          />
           {/* new Comment so its  CommentId will be null */}
           <CommentTextbar postId={post.id} CommentId={null} />
         </Collapse>

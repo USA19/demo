@@ -16,6 +16,7 @@ const express_1 = require("express");
 const multer_1 = __importDefault(require("multer"));
 const Post_model_1 = __importDefault(require("../model/Post.model"));
 const PostMedia_model_1 = __importDefault(require("../model/PostMedia.model"));
+const User_model_1 = __importDefault(require("../model/User.model"));
 const imageDelete_1 = require("./imageDelete");
 const router = express_1.Router();
 const fileStorage = multer_1.default.diskStorage({
@@ -40,24 +41,44 @@ const postImageHandler = multer_1.default({
     storage: fileStorage,
     fileFilter: fileFilter,
 }).any();
-// const userImageHandler = multer({
-//   storage: fileStorage,
-//   fileFilter: fileFilter,
-// }).single("image");
+const userImageHandler = multer_1.default({
+    storage: fileStorage,
+    fileFilter: fileFilter,
+}).single("image");
 router.post("/uploadPostImage/:postId", postImageHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        if (req.files) {
-            let postMedia = [];
-            for (let file of req.files) {
-                postMedia.push({
-                    PostId: parseInt(req.params.postId),
-                    mediaUrl: file.path,
-                });
-            }
-            // console.log("🚀 ~ file: post.controller.js ~ line 40 ~");
-            const media = yield PostMedia_model_1.default.bulkCreate(postMedia);
-            res.status(200).json(media);
+        if (!req.files) {
+            return res.status(400).json({ message: "no image provided " });
         }
+        const post = yield Post_model_1.default.findByPk(req.params.postId, {
+            include: [
+                {
+                    model: User_model_1.default,
+                    attributes: [
+                        "id",
+                        "firstName",
+                        "lastName",
+                        "email",
+                        "profileImageUrl",
+                        "RoleId",
+                    ],
+                },
+            ],
+        });
+        if (!post) {
+            return res.status(400).json({ message: "no post exist" });
+        }
+        let postMedia = [];
+        for (let file of req.files) {
+            postMedia.push({
+                PostId: post.id,
+                mediaUrl: file.path,
+            });
+        }
+        // console.log("🚀 ~ file: post.controller.js ~ line 40 ~");
+        const media = yield PostMedia_model_1.default.bulkCreate(postMedia);
+        yield post.reload();
+        res.status(200).json(post);
     }
     catch (e) {
         console.log(e);
@@ -66,7 +87,7 @@ router.post("/uploadPostImage/:postId", postImageHandler, (req, res) => __awaite
             .json({ message: "something went wrong in uplaoding image" });
     }
 }));
-router.delete("/deletePostImage", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.delete("/deletePostImage/:id/:imageId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const post = yield Post_model_1.default.findByPk(req.params.id, {
             include: [{ model: PostMedia_model_1.default }],
@@ -90,5 +111,19 @@ router.delete("/deletePostImage", (req, res) => __awaiter(void 0, void 0, void 0
             .status(500)
             .json({ message: "something went wrong in uplaoding image" });
     }
+}));
+router.put("/editUser/:userId", userImageHandler, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let user = yield User_model_1.default.findByPk(req.params.userId);
+    if (!user) {
+        return res.status(404).json({ message: "no user found" });
+    }
+    if (req.file) {
+        user.profileImageUrl = req.file.path;
+    }
+    user.firstName = req.body.firstName;
+    user.lastName = req.body.lastName;
+    user.date_of_birth = new Date(req.body.date_of_birth);
+    yield user.save();
+    res.status(200).json(user);
 }));
 exports.default = router;

@@ -46,6 +46,10 @@ __decorate([
     type_graphql_1.Field(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], LoginResponse.prototype, "token", void 0);
+__decorate([
+    type_graphql_1.Field(() => Number),
+    __metadata("design:type", Number)
+], LoginResponse.prototype, "status", void 0);
 LoginResponse = __decorate([
     type_graphql_1.ObjectType()
 ], LoginResponse);
@@ -81,6 +85,10 @@ __decorate([
     type_graphql_1.Field(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], SignupResponse.prototype, "message", void 0);
+__decorate([
+    type_graphql_1.Field(() => Number),
+    __metadata("design:type", Number)
+], SignupResponse.prototype, "status", void 0);
 SignupResponse = __decorate([
     type_graphql_1.ObjectType()
 ], SignupResponse);
@@ -91,23 +99,25 @@ let UserResollver = class UserResollver {
                 const user = yield User_model_1.default.findOne({
                     where: { email: email },
                 });
-                console.log("User email and password ");
                 if (!user) {
-                    return { message: "no user with message found " };
+                    return { status: 400, message: "no user with message found " };
                 }
                 const doMatch = bcryptjs_1.default.compareSync(password, user.password);
                 if (!doMatch) {
-                    return { message: "you have entered wrong email or password" };
+                    return {
+                        status: 400,
+                        message: "you have entered wrong email or password",
+                    };
                 }
                 const token = jsonwebtoken_1.default.sign({ userId: user.id }, config_1.default.JWTKEY, {
                     expiresIn: "365d",
                 });
                 // res.status(200).json({ user, token });
-                return { user, token };
+                return { status: 200, user, token };
             }
             catch (e) {
                 console.trace(e);
-                return { message: "something went wrong in login" };
+                return { status: 500, message: "something went wrong in login" };
                 // res.status(200).json({ messsage: "something went wrong in login" });
             }
         });
@@ -122,6 +132,7 @@ let UserResollver = class UserResollver {
                 });
                 if (user) {
                     return {
+                        status: 400,
                         message: "the user with this email already exist try other",
                     };
                 }
@@ -135,17 +146,23 @@ let UserResollver = class UserResollver {
                     RoleId: 1,
                 });
                 yield newUser.save();
-                return { message: "user created successfully" };
+                return { status: 200, message: "user created successfully" };
             }
             catch (e) {
                 console.trace(e);
-                return { message: "something went wrong in signup" };
+                return { status: 500, message: "something went wrong in signup" };
             }
         });
     }
-    hello() {
+    getLoggedInUser({ req }) {
         return __awaiter(this, void 0, void 0, function* () {
-            return "hello";
+            const user = yield User_model_1.default.findByPk(req.userId);
+            if (!user) {
+                throw new Error("no user found");
+            }
+            else {
+                return user;
+            }
         });
     }
 };
@@ -166,11 +183,12 @@ __decorate([
 ], UserResollver.prototype, "signup", null);
 __decorate([
     type_graphql_1.UseMiddleware(auth_1.isAuth),
-    type_graphql_1.Query(() => String),
+    type_graphql_1.Query(() => User_model_1.default),
+    __param(0, type_graphql_1.Ctx()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], UserResollver.prototype, "hello", null);
+], UserResollver.prototype, "getLoggedInUser", null);
 UserResollver = __decorate([
     type_graphql_1.Resolver()
 ], UserResollver);

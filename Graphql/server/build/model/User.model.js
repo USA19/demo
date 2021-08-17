@@ -26,10 +26,6 @@ __decorate([
 __decorate([
     type_graphql_1.Field(),
     __metadata("design:type", String)
-], User.prototype, "name", void 0);
-__decorate([
-    type_graphql_1.Field(),
-    __metadata("design:type", String)
 ], User.prototype, "firstName", void 0);
 __decorate([
     type_graphql_1.Field(),
@@ -40,34 +36,18 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([
-    type_graphql_1.Field() // timestamps!
+    type_graphql_1.Field({ nullable: true }) // timestamps!
     ,
     __metadata("design:type", Date)
 ], User.prototype, "date_of_birth", void 0);
 __decorate([
     type_graphql_1.Field({ nullable: true }),
     __metadata("design:type", String)
-], User.prototype, "bio", void 0);
-__decorate([
-    type_graphql_1.Field({ nullable: true }),
-    __metadata("design:type", String)
 ], User.prototype, "profileImageUrl", void 0);
-__decorate([
-    type_graphql_1.Field(),
-    __metadata("design:type", String)
-], User.prototype, "password", void 0);
 __decorate([
     type_graphql_1.Field({ nullable: true }),
     __metadata("design:type", Number)
 ], User.prototype, "RoleId", void 0);
-__decorate([
-    type_graphql_1.Field(),
-    __metadata("design:type", Date)
-], User.prototype, "createdAt", void 0);
-__decorate([
-    type_graphql_1.Field(),
-    __metadata("design:type", Date)
-], User.prototype, "updatedAt", void 0);
 __decorate([
     type_graphql_1.Field((type) => Role_model_1.default, { nullable: true }),
     __metadata("design:type", Role_model_1.default)

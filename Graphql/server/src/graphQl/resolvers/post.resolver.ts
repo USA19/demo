@@ -31,7 +31,13 @@ class PostResponse {
   @Field(() => Number, { nullable: true })
   count?: number;
 }
-
+@ObjectType()
+class PostsResponse {
+  @Field(() => [Post])
+  posts!: Post[];
+  @Field(() => Number)
+  count!: number;
+}
 // input for creating the post
 @InputType()
 export class createPostBody {
@@ -39,21 +45,14 @@ export class createPostBody {
   description!: string;
 }
 
-interface Upload {
-  filename: string;
-  mimetype: string;
-  encoding: string;
-  createReadStream: () => Stream;
-}
-
 @Resolver()
 export class PostResolver {
-  @Query(() => PostResponse)
+  @Query(() => PostsResponse)
   @UseMiddleware(isAuth)
   async getPosts(
     @Arg("limit") limit: number = 10,
     @Arg("page") page: number = 1
-  ): Promise<PostResponse> {
+  ): Promise<PostsResponse> {
     try {
       const posts: Post[] = await Post.findAll({
         include: [
@@ -143,8 +142,9 @@ export class PostResolver {
 
       return { posts, count: pages };
     } catch (e) {
-      return { message: "something went wrong in postAddRole" };
       console.trace(e);
+      // return { message: "something went wrong in postAddRole" };
+      throw new Error("some thing went wront at fetch posts");
     }
   }
 
@@ -173,7 +173,6 @@ export class PostResolver {
               "RoleId",
             ],
           },
-          { model: PostMedia },
         ],
       });
       if (createdPost) {
@@ -190,8 +189,8 @@ export class PostResolver {
   @Mutation(() => PostResponse)
   @UseMiddleware(isAuth)
   async editPost(
-    @Arg("id") id:number,
-    @Arg("createPostBody") body: createPostBody,
+    @Arg("id") id: number,
+    @Arg("editPostBody") body: createPostBody,
     @Ctx() { req }: MyContext
   ): Promise<PostResponse> {
     try {
@@ -273,7 +272,7 @@ export class PostResolver {
         return { message: "Only orignal creator can delete the post" };
       }
 
-      post.description = req.body.description;
+      post.description = body.description;
       await post.save();
       await post.reload();
       return { post };
@@ -299,14 +298,12 @@ export class PostResolver {
       if (req.userId !== post.UserId) {
         return { message: "Only orignal creator can delete the post" };
       }
-      await PostMedia.destroy({
-        where: { id: req.params.imageId },
+      await Post.destroy({
+        where: { id: id },
       });
 
       for (let postMedia of post.PostMedia) {
-        if (postMedia.id === parseInt(req.params.imageId)) {
-          deleteFile(postMedia.mediaUrl);
-        }
+        deleteFile(postMedia.mediaUrl);
       }
       return {
         message: "image deleted successfully",
