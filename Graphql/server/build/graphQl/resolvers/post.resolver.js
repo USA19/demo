@@ -41,17 +41,9 @@ __decorate([
     __metadata("design:type", Post_model_1.default)
 ], PostResponse.prototype, "post", void 0);
 __decorate([
-    type_graphql_1.Field(() => [Post_model_1.default], { nullable: true }),
-    __metadata("design:type", Array)
-], PostResponse.prototype, "posts", void 0);
-__decorate([
     type_graphql_1.Field(() => String, { nullable: true }),
     __metadata("design:type", String)
 ], PostResponse.prototype, "message", void 0);
-__decorate([
-    type_graphql_1.Field(() => Number, { nullable: true }),
-    __metadata("design:type", Number)
-], PostResponse.prototype, "count", void 0);
 PostResponse = __decorate([
     type_graphql_1.ObjectType()
 ], PostResponse);

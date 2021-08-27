@@ -164,7 +164,7 @@ const CreatePost = ({ open, setOpen }: CreatePostProps): JSX.Element => {
         classes={{ paper: classes.dialogPaper }}
       >
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
-          What is in your mind?
+          What is on your mind?
         </DialogTitle>
         <DialogContent dividers style={{ position: "relative" }}>
           <Grid container spacing={1}>

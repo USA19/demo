@@ -24,12 +24,10 @@ import { deleteFile } from "../../utils/imageDelete";
 class PostResponse {
   @Field(() => Post, { nullable: true })
   post?: Post;
-  @Field(() => [Post], { nullable: true })
-  posts?: Post[];
+
   @Field(() => String, { nullable: true })
   message?: string;
-  @Field(() => Number, { nullable: true })
-  count?: number;
+
 }
 @ObjectType()
 class PostsResponse {
