@@ -9,6 +9,7 @@ import { UserModule } from './module/user/user.module';
 import { PostModule } from './module/post/post.module';
 import { PostMediaModule } from './module/post-media/post-media.module';
 import { CommentModule } from './module/comment/comment.module';
+import { NodeMailerModule } from './module/mailer/mailer.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot(),
@@ -21,6 +22,7 @@ import { CommentModule } from './module/comment/comment.module';
     PostModule,
     PostMediaModule,
     CommentModule,
+    NodeMailerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -11,6 +11,7 @@ import { UserRegisterDto } from './dto/UserRegisterDto';
 import { UserLoginDto } from './dto/UserLoginDto';
 import { User } from '../../model/user.model';
 import { RoleService } from '../role/role.service';
+import { NodeMailerService } from '../mailer/mailer.service';
 @Injectable()
 export class AuthService {
   constructor(
@@ -18,6 +19,7 @@ export class AuthService {
     public readonly configService: ConfigService,
     public readonly userService: UserService,
     public readonly RoleServices: RoleService,
+    public readonly NodeMailer: NodeMailerService,
   ) {}
 
   async login(body: UserLoginDto) {
@@ -78,7 +80,7 @@ export class AuthService {
         Role: role,
       };
       await this.userService.create(createUserDto);
-
+      this.NodeMailer.sendWelcomeEmail({ to: user.email });
       return { message: 'user created successfully' };
     } catch (e) {
       console.log(e);

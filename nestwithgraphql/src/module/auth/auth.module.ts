@@ -14,6 +14,7 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { User } from '../../model/user.model';
 import { RoleModule } from '../role/role.module';
 // import { GqlAuthGuard } from 'src/core/guards/gql-auth-guard';
+import { NodeMailerModule } from '../mailer/mailer.module';
 
 @Module({
   imports: [
@@ -30,9 +31,9 @@ import { RoleModule } from '../role/role.module';
       secret: process.env.APP_SECRET,
       signOptions: { expiresIn: '365d' },
     }),
+    NodeMailerModule,
   ],
   providers: [
-    // GqlAuthGuard,
     AuthResolver,
     AuthService,
     UserService,
