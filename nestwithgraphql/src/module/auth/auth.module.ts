@@ -28,7 +28,7 @@ import { RoleModule } from '../role/role.module';
     }),
     JwtModule.register({
       secret: process.env.APP_SECRET,
-      signOptions: { expiresIn: '1y' },
+      signOptions: { expiresIn: '365d' },
     }),
   ],
   providers: [

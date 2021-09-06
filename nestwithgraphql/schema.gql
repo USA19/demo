@@ -76,6 +76,10 @@ type GetPostResponseGql {
   post: Post
 }
 
+type DeletePostResponseGql {
+  message: String!
+}
+
 type AddCommentResponseGql {
   post: Post!
 }
@@ -91,6 +95,8 @@ type Mutation {
   createRole(body: CreateRoleInputType!): CreateRoleOutput!
   deleteRole(roleId: String!): DeleteRoleOutput!
   createPost(body: CreatePostDto!): GetPostResponseGql!
+  updatePost(body: UpdatePostDto!): GetPostResponseGql!
+  deletePost(postId: String!): DeletePostResponseGql!
   addPostComment(body: AddCommmentBody!): AddCommentResponseGql!
 }
 
@@ -113,6 +119,11 @@ input CreateRoleInputType {
 
 input CreatePostDto {
   description: String!
+}
+
+input UpdatePostDto {
+  description: String!
+  postId: String!
 }
 
 input AddCommmentBody {

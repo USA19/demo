@@ -18,5 +18,6 @@ export class UpdatePostDto {
   description!: string;
 
   @Field()
+  @IsString()
   postId!: string;
 }

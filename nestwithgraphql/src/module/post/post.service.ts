@@ -5,8 +5,8 @@ import { Repository } from 'typeorm';
 import { CreatePostDto } from './dto/createPostDto';
 
 import { deleteFile } from '../../utils/imageDelete';
-import { getPostsResponse } from './interface/post.interface';
-import { UserService } from '../user/user.service';
+import { GetPostsResponse } from './interface/post.interface';
+// import { UserService } from '../user/user.service';
 import { User } from 'src/model/user.model';
 
 @Injectable()
@@ -14,10 +14,9 @@ export class PostService {
   constructor(
     @InjectRepository(Post)
     private readonly PostModel: Repository<Post>,
-    private readonly UserServices: UserService,
   ) {}
 
-  async getPosts(page = 1, limit = 10): Promise<getPostsResponse> {
+  async getPosts(page = 1, limit = 10): Promise<GetPostsResponse> {
     try {
       const skip = (page - 1) * limit;
 
@@ -41,24 +40,7 @@ export class PostService {
       const result = await postQuery.getMany();
 
       const count = await this.PostModel.count();
-      // const [result, total] = await this.PostModel.find();
-      //   relations: [
-      //     'User',
-      //     'PostMedia',
-      //     'comments',
-      //     'comments.Comments',
-      //     'comments.User',
-      //     'comments.Comments.User',
-      //   ],
-      // take: limit,
 
-      // skip: (page - 1) * limit,
-      // order: {
-      //   id: 'DESC',
-      // },
-      // });
-
-      // const result = await this.PostModel.find();
       return { count, posts: result };
     } catch (e) {
       console.log(e);
@@ -73,8 +55,8 @@ export class PostService {
   }
 
   async createPost(body: CreatePostDto, user: User): Promise<Post> {
-    const post = { ...body, User: user };
-    // console.log('==================>>>', user);
+    const post = { ...body, user: user };
+
     const newPost = this.PostModel.create(post);
     await this.PostModel.insert(newPost);
     return await this.getPostById(newPost.id);
@@ -90,7 +72,7 @@ export class PostService {
       throw new BadRequestException('no post with this id found');
     }
     if (post.user.id !== loggedInUserId) {
-      throw new BadRequestException('only orignal creators can modify post');
+      throw new BadRequestException('only original creators can modify post');
     }
     await this.PostModel.update(
       { id: postId },

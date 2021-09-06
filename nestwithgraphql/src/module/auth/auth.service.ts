@@ -45,7 +45,7 @@ export class AuthService {
     try {
       const user = await this.userService.findOne({ email });
       // console.log('im here', user);
-      if (!user) throw new BadRequestException('Inavlid Passsword or Email');
+      if (!user) throw new BadRequestException('Invalid Password or Email');
 
       const isPasswordMatching = await bcrypt.compare(
         plainPassword,

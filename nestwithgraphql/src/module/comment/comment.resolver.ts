@@ -1,12 +1,15 @@
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from 'src/core/guards/gql-auth-guard';
 import { Resolver, Mutation, Args } from '@nestjs/graphql';
-import { CurrentUser } from 'src/core/customDecorators/getCurrentUserDecorator';
+import {
+  CurrentUser,
+  LoggedInUserInterface,
+} from 'src/core/customDecorators/getCurrentUserDecorator';
 import { CommentService } from './comment.service';
-import { User } from 'src/model/user.model';
 import { Post } from 'src/model/post.model';
 import { ObjectType, Field, InputType } from '@nestjs/graphql';
 // import { PostMedia } from 'src/model/postMedia.model';
+import { AddCommentResponse } from './interface/comment.interface';
 @InputType()
 class AddCommmentBody {
   @Field()
@@ -32,14 +35,15 @@ export class CommentResolver {
   async addPostComment(
     @Args('body')
     body: AddCommmentBody,
-    @CurrentUser() user: User,
-  ) {
+    @CurrentUser() user: LoggedInUserInterface,
+  ): Promise<AddCommentResponse> {
     const data = {
-      userId: user.id,
+      userId: user.loggedInUser.id,
       comment: body.comment,
       postId: body.postId,
       parentId: body.commentsId,
     };
-    return await this.commentService.addComment(data);
+    const post = await this.commentService.addComment(data);
+    return { post };
   }
 }

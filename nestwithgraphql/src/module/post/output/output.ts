@@ -14,3 +14,9 @@ export class GetPostResponseGql {
   @Field(() => Post, { nullable: true })
   post: Post;
 }
+
+@ObjectType()
+export class DeletePostResponseGql {
+  @Field()
+  message: string;
+}
