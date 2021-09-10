@@ -43,6 +43,7 @@ type User {
   role: Role
   Post: [Post!]
   comments: [Comment!]
+  fullName: String!
 }
 
 """
@@ -80,6 +81,18 @@ type DeletePostResponseGql {
   message: String!
 }
 
+type SourceInterface {
+  description: String!
+}
+
+type SearchPostResponse {
+  _index: String!
+  _type: String!
+  _id: String!
+  _score: Int!
+  _source: SourceInterface!
+}
+
 type AddCommentResponseGql {
   post: Post!
 }
@@ -97,6 +110,7 @@ type Mutation {
   createPost(body: CreatePostDto!): GetPostResponseGql!
   updatePost(body: UpdatePostDto!): GetPostResponseGql!
   deletePost(postId: String!): DeletePostResponseGql!
+  searchPostUsingDescription(description: String!): [SearchPostResponse!]!
   addPostComment(body: AddCommmentBody!): AddCommentResponseGql!
 }
 

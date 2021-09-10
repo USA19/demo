@@ -14,8 +14,7 @@ export class AuthResolver {
   sayHello(): string {
     return 'Hello World!';
   }
-  // login
-  // @UseGuards(LocalAuthGuard) //for authenticating for login(//email|userName,password)
+
   @Mutation(() => UserLoginOutput)
   async login(@Args('body') body: LoginInputType) {
     return this.authService.login(body);

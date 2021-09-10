@@ -17,6 +17,7 @@ import {
   GetPostsResponseGql,
   GetPostResponseGql,
   DeletePostResponseGql,
+  SearchPostResponse,
 } from './output/output';
 
 @Resolver()
@@ -66,5 +67,16 @@ export class PostResolver {
       postId,
     );
     return { message };
+  }
+
+  @UseGuards(GqlAuthGuard)
+  @Mutation(() => [SearchPostResponse])
+  async searchPostUsingDescription(
+    @Args('description') description: string,
+  ): Promise<SearchPostResponse[]> {
+    const response = await this.postService.searchPostUsingDescription(
+      description,
+    );
+    return response;
   }
 }

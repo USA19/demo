@@ -10,6 +10,7 @@ import { PostModule } from './module/post/post.module';
 import { PostMediaModule } from './module/post-media/post-media.module';
 import { CommentModule } from './module/comment/comment.module';
 import { NodeMailerModule } from './module/mailer/mailer.module';
+import { ElasticSearchModule } from './module/elastic-search/elastic-search.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot(),
@@ -23,6 +24,7 @@ import { NodeMailerModule } from './module/mailer/mailer.module';
     PostMediaModule,
     CommentModule,
     NodeMailerModule,
+    ElasticSearchModule,
   ],
   controllers: [AppController],
   providers: [AppService],

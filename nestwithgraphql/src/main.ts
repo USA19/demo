@@ -8,7 +8,6 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
   app.use('/images', express.static('./images'));
   global.appRoot = path.resolve(__dirname, '../src');
-  console.log('================>>>>>>>>>>>>>>>>>>', global.appRoot);
   await app.listen(3000);
 }
 bootstrap();

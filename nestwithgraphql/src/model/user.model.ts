@@ -9,6 +9,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Field, ObjectType } from '@nestjs/graphql';
+import { Expose } from 'class-transformer';
 
 import { Role } from './role.model';
 import { Post } from './post.model';
@@ -65,4 +66,9 @@ export class User {
     onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
   updatedAt: Date;
+  @Field()
+  @Expose()
+  get fullName(): string {
+    return `${this.firstName} ${this.lastName}`;
+  }
 }

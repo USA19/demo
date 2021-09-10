@@ -1,5 +1,5 @@
 import { Post } from 'src/model/post.model';
-import { ObjectType, Field } from '@nestjs/graphql';
+import { ObjectType, Field, Int } from '@nestjs/graphql';
 
 @ObjectType()
 export class GetPostsResponseGql {
@@ -19,4 +19,23 @@ export class GetPostResponseGql {
 export class DeletePostResponseGql {
   @Field()
   message: string;
+}
+
+@ObjectType()
+class SourceInterface {
+  @Field()
+  description: string;
+}
+@ObjectType()
+export class SearchPostResponse {
+  @Field()
+  _index: string;
+  @Field()
+  _type: string;
+  @Field()
+  _id: string;
+  @Field(() => Int)
+  _score: unknown;
+  @Field(() => SourceInterface)
+  _source: unknown;
 }

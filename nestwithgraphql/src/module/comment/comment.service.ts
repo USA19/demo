@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { Comment } from 'src/model/comment.model';
 import { PostService } from '../post/post.service';
 import { UserService } from '../user/user.service';
+// import { ElasticSearchService } from '../elastic-search/elastic-search.service';
 @Injectable()
 export class CommentService {
   constructor(
